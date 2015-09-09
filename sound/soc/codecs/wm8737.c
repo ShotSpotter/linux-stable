@@ -359,13 +359,13 @@ static int wm8737_hw_params(struct snd_pcm_substream *substream,
 	case 16:
 		break;
 	case 20:
-		af |= 0x8;
+		af |= 0x4;
 		break;
 	case 24:
-		af |= 0x10;
+		af |= 0x8;
 		break;
 	case 32:
-		af |= 0x18;
+		af |= 0xC;
 		break;
 	default:
 		return -EINVAL;
@@ -459,6 +459,8 @@ static int wm8737_set_bias_level(struct snd_soc_codec *codec,
 
 	switch (level) {
 	case SND_SOC_BIAS_ON:
+	  /* turn micbias voltage to highest value 11*/
+	  snd_soc_update_bits(codec, WM8737_POWER_MANAGEMENT, WM8737_MICBIAS_MASK, WM8737_MICBIAS_MASK);
 		break;
 
 	case SND_SOC_BIAS_PREPARE:
