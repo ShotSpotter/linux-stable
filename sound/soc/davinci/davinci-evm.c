@@ -330,6 +330,19 @@ static struct snd_soc_card da850_snd_soc_card = {
  * The struct is used as place holder. It will be completely
  * filled with data from dt node.
  */
+
+static struct snd_soc_dai_link evm_dai_wm8737 = {
+  .name= "WM8737",
+  .stream_name= "Capture", /* comes from wm8737 driver */
+  .codec_dai_name= "wm8737", /* comes from wm8737 driver */
+  .ops = &evm_ops,
+/*.init = evm_wm8737_init,*/
+  .dai_fmt = SND_SOC_DAIFMT_I2S | /* I2S */
+             SND_SOC_DAIFMT_CBM_CFM | /* codec is clock master and frame master */
+             SND_SOC_DAIFMT_NB_NF, /* normal bitclock, normal frame (soc-dai.h) */
+  .capture_only = true,
+  };
+
 static struct snd_soc_dai_link evm_dai_tlv320aic3x = {
 	.name		= "TLV320AIC3X",
 	.stream_name	= "AIC3X",
@@ -341,6 +354,10 @@ static struct snd_soc_dai_link evm_dai_tlv320aic3x = {
 };
 
 static const struct of_device_id davinci_evm_dt_ids[] = {
+  {
+    .compatible = "ti,wm8737-evm-audio",
+    .data = &evm_dai_wm8737,
+  },
 	{
 		.compatible = "ti,da830-evm-audio",
 		.data = (void *) &evm_dai_tlv320aic3x,
