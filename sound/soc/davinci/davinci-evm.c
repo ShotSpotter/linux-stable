@@ -337,9 +337,9 @@ static struct snd_soc_dai_link evm_dai_wm8737 = {
   .codec_dai_name= "wm8737", /* comes from wm8737 driver */
   .ops = &evm_ops,
 /*.init = evm_wm8737_init,*/
-  .dai_fmt = SND_SOC_DAIFMT_I2S | /* I2S */
+  .dai_fmt = SND_SOC_DAIFMT_DSP_B | /* DSP B */
              SND_SOC_DAIFMT_CBM_CFM | /* codec is clock master and frame master */
-             SND_SOC_DAIFMT_NB_NF, /* normal bitclock, normal frame (soc-dai.h) */
+             SND_SOC_DAIFMT_NB_NF, /* invert bitclock, normal frame (soc-dai.h) */
   .capture_only = true,
   };
 
