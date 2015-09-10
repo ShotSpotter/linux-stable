@@ -50,7 +50,7 @@
 #define WM8737_REG_1B                           0x1B
 #define WM8737_REG_1C                           0x1C
 
-#define WM8737_REGISTER_COUNT                   28
+#define WM8737_REGISTER_COUNT                   29
 #define WM8737_MAX_REGISTER                     0x1C
 
 /*

@@ -62,6 +62,7 @@ static const struct reg_default wm8737_reg_defaults[] = {
 	{ 12, 0x007C },     /* R12 - ALC1 */
 	{ 13, 0x0000 },     /* R13 - ALC2 */
 	{ 14, 0x0032 },     /* R14 - ALC3 */
+        { 28, 0x0000 },     /* R28 - RESERVED SEE DATASHEET */
 };
 
 static bool wm8737_volatile(struct device *dev, unsigned int reg)
