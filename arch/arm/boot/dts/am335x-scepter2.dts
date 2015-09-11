@@ -10,7 +10,7 @@
 #include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-	model = "TI AM335x EVM";
+	model = "scepter2";
 	compatible = "ti,am335x-evm", "ti,am33xx";
 
 	cpus {
@@ -176,7 +176,7 @@
 	};
 
 	/* st lsm303 accelerometer-magnetometer */
-	lsm330d_i2c_pins_default: lsm330d_i2c_pins_default {
+	lsm303d_i2c_pins_default: lsm303d_i2c_pins_default {
 		pinctrl-single,pins = <
 			0x154 ( PIN_INPUT | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
 			0x150 ( PIN_INPUT | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
@@ -501,9 +501,30 @@
 
 &i2c2 {
 	pinctrl-names = "default";
-	pinctrl-0 = <&lsm330d_i2c_pins_default>;
+	pinctrl-0 = <&lsm303d_i2c_pins_default>;
 	status = "okay";
 	clock-frequency = <400000>;
+
+	accel: lsm303d@1d {
+		compatible = "st,lsm303dlh-accel";
+		reg = <0x1d>;
+		status = "okay";
+	};
+
+        mag: lsm303d@1e {
+                compatible = "st,lsm303dlh-magn";
+                reg = <0x1d>;
+                status = "okay";
+        };
+};
+
+
+&accel {
+
+};
+
+&mag {
+
 };
 
 
