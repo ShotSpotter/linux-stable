@@ -159,6 +159,12 @@
 	};
 
 
+	pps {
+		compatible = "pps-gpio";
+		gpios = <&gpio2 24 0>;
+	};
+
+
 };
 
 /* =========================================================================================== */
@@ -178,8 +184,15 @@
 	/* st lsm303 accelerometer-magnetometer */
 	lsm303d_i2c_pins_default: lsm303d_i2c_pins_default {
 		pinctrl-single,pins = <
-			0x154 ( PIN_INPUT | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
-			0x150 ( PIN_INPUT | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
+			0x154 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
+			0x150 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
+		>;
+	};
+
+	lsm303d_i2c_pins_sleep: lsm303d_i2c_pins_sleep {
+		pinctrl-single,pins = <
+			0x154 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
+			0x150 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
 		>;
 	};
 
@@ -209,17 +222,25 @@
 		>;
 	};
 
-	uart4_pins_default: pinmux_uart4_pins_default {
+
+/* kpps is not working sensibly, make both kpps inputs into gpios */
+
+	uart_gps_pins_default: uart_gps_pins_default {
 		pinctrl-single,pins = <
 			0x11c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
+			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
 		>;
 	};
 
-	uart4_pins_sleep: pinmux_uart4_pins_sleep {
+	/* Optional sleep pin settings. Must manually enter values in the below skeleton. */
+	uart_gps_pins_sleep: uart_gps_pins_sleep {
 		pinctrl-single,pins = <
-			0x11c ( PIN_INPUT | MUX_MODE7 ) /* (J18) gmii1_txd3.uart4_rxd */
-			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE7 ) /* (K15) gmii1_txd2.uart4_txd */
+			0x11c ( PIN_INPUT | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
+			0x120 ( PIN_OUTPUT | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
+			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
 		>;
 	};
 
@@ -425,9 +446,6 @@
 
 	am335x_evm_audio_pins: am335x_evm_audio_pins {
 		pinctrl-single,pins = <
-#if 0
-			0x19c ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (C12) mcasp0_ahclkr.mcasp0_ahclkr */
-#endif
 			0x1a0 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (B12) mcasp0_aclkr.mcasp0_aclkr */
 			0x1a4 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (C13) mcasp0_fsr.mcasp0_fsr */
 			0x1a8 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (D13) mcasp0_axr1.mcasp0_axr1 */
@@ -438,10 +456,6 @@
 
 	am335x_evm_audio_pins_sleep: am335x_evm_audio_pins_sleep {
 		pinctrl-single,pins = <
-
-#if 0
-			0x19c ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (C12) mcasp0_ahclkr.mcasp0_ahclkr */
-#endif
 			0x1a0 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (B12) mcasp0_aclkr.mcasp0_aclkr */
 			0x1a4 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (C13) mcasp0_fsr.mcasp0_fsr */
 			0x1a8 ( PIN_INPUT_PULLDOWN | MUX_MODE0 ) /* (D13) mcasp0_axr1.mcasp0_axr1 */
@@ -470,8 +484,8 @@
 
 &uart4 {
 	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&uart4_pins_default>;
-	pinctrl-1 = <&uart4_pins_sleep>;
+	pinctrl-0 = <&uart_gps_pins_default>;
+	pinctrl-1 = <&uart_gps_pins_sleep>;
 	status = "okay";
 };
 
@@ -499,21 +513,26 @@
 
 };
 
+/* still not seeing i2c2 in iio */
+
 &i2c2 {
-	pinctrl-names = "default";
+	pinctrl-names = "default","sleep";
 	pinctrl-0 = <&lsm303d_i2c_pins_default>;
+	pinctrl-1 = <&lsm303d_i2c_pins_sleep>;
 	status = "okay";
 	clock-frequency = <400000>;
 
-	accel: lsm303d@1d {
+	accel: lsm303d@1e {
 		compatible = "st,lsm303dlh-accel";
-		reg = <0x1d>;
+		st,drdy-int-pin = <1>;
+		reg = <0x1e>;
 		status = "okay";
 	};
 
         mag: lsm303d@1e {
                 compatible = "st,lsm303dlh-magn";
-                reg = <0x1d>;
+		st,drdy-int-pin = <2>;
+                reg = <0x1e>;
                 status = "okay";
         };
 };
