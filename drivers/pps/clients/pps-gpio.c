@@ -70,9 +70,6 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
 			 (!rising_edge && !info->assert_falling_edge)))
 		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
 
-	if (errno) {
-		dev_err(&pdev->dev, "pps_event threw error %d",errno);
-	}
 	return IRQ_HANDLED;
 }
 
@@ -98,7 +95,7 @@ static int pps_gpio_probe(struct platform_device *pdev)
 	int pps_default_params;
 	const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
 	struct device_node *np = pdev->dev.of_node;
-	char *of_str;
+	const char *str;
 	int len;
 
 	/* allocate space for device info */
@@ -128,6 +125,12 @@ static int pps_gpio_probe(struct platform_device *pdev)
 		if (of_get_property(np, "capture-clear", NULL))
 			data->capture_clear = true;
 	}
+
+#ifdef CONFIG_NTP_PPS
+        dev_info(&pdev->dev,"CONFIG_NTP_PPS is set\n");
+#else
+        dev_info(&pdev->dev,"Warning: CONFIG_NTP_PPS is not set\n");
+#endif
 
 	/* GPIO setup */
 	ret = devm_gpio_request(&pdev->dev, data->gpio_pin, gpio_label);
@@ -160,7 +163,7 @@ static int pps_gpio_probe(struct platform_device *pdev)
 	data->info.owner = THIS_MODULE;
 
 	/* read name and path (associated serial device) from DT */
-	str = of_get_property(np, "name", &len);
+	str = of_get_property(np, "source-name", &len);
 	if (str) {
 		len = (len < PPS_MAX_NAME_LEN ? len : PPS_MAX_NAME_LEN);
 		snprintf(data->info.name, len, str);
@@ -169,12 +172,10 @@ static int pps_gpio_probe(struct platform_device *pdev)
 			 pdev->name, pdev->id);
 	}
 
-        str = of_get_property(np, "path", &len);
+        str = of_get_property(np, "source-path", &len);
 	if (str) {
 		len = (len < PPS_MAX_NAME_LEN ? len : PPS_MAX_NAME_LEN);
 		snprintf(data->info.path, len, str);
-        } else {
-		snprintf(data->info.path, PPS_MAX_NAME_LEN, "");
         }
 
 	/* register PPS source */
