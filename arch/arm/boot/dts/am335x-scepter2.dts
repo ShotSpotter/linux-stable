@@ -161,6 +161,8 @@
 
 	pps {
 		compatible = "pps-gpio";
+		name = "ublox";
+		path = "/dev/ttyO4";
 		gpios = <&gpio2 24 0>;
 	};
 
