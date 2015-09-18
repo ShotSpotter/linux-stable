@@ -164,7 +164,7 @@
 		source-name = "ublox";
 		source-path = "/dev/ttyO4";
 		gpios = <&gpio2 24 0>;
-		capture-clear;
+		/* capture-clear; */
 	};
 
 
