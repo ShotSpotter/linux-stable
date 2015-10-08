@@ -159,12 +159,21 @@
 	};
 
 
-	pps {
+	pps_0 {
 		compatible = "pps-gpio";
-		source-name = "ublox";
+		source-name = "ublox_max7";
 		source-path = "/dev/ttyO4";
 		gpios = <&gpio2 24 0>;
 		/* capture-clear; */
+	};
+
+/* external pps to gpio0-4 on rcalhoun's board only */
+        pps_1 {
+                compatible = "pps-gpio";
+                source-name = "ublox_lea4H";
+		source-path = "";
+		gpios = <&gpio0 4 0>;
+                /* capture-clear; */
 	};
 
 
@@ -234,6 +243,7 @@
 			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
 			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
+			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
 
@@ -244,6 +254,7 @@
 			0x120 ( PIN_OUTPUT | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
 			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
+			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
 
