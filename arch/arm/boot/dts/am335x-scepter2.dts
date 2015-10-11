@@ -163,18 +163,21 @@
 		compatible = "pps-gpio";
 		source-name = "ublox_max7";
 		source-path = "/dev/ttyO4";
-		gpios = <&gpio2 24 0>;
+		gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
+		interrupts = <32 1>; /* low-to-high */
 		/* capture-clear; */
 	};
 
-/* external pps to gpio0-4 on rcalhoun's board only */
+/* external pps to gpio0-4 on rcalhoun's board only
         pps_1 {
                 compatible = "pps-gpio";
                 source-name = "ublox_lea4H";
 		source-path = "";
-		gpios = <&gpio0 4 0>;
-                /* capture-clear; */
+		gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+		interrupts = <96 1>;
+
 	};
+*/
 
 
 };
