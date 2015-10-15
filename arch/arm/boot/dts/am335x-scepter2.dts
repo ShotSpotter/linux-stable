@@ -163,10 +163,10 @@
 		compatible = "pps-gpio";
 		source-name = "ublox_max7";
 		source-path = "/dev/ttyO4";
-		gpios = <&gpio2 24 GPIO_ACTIVE_HIGH>;
-		interrupts = <32 1>; /* low-to-high */
+		gpios = <&gpio0 8 GPIO_ACTIVE_HIGH>;
 		/* capture-clear; */
 	};
+
 
 /* external pps to gpio0-4 on rcalhoun's board only
         pps_1 {
@@ -178,7 +178,6 @@
 
 	};
 */
-
 
 };
 
@@ -245,7 +244,8 @@
 			0x11c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
+			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
+			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
@@ -256,7 +256,8 @@
 			0x11c ( PIN_INPUT | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
+			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
+			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
@@ -563,37 +564,37 @@
 
 };
 
-
 &usb {
-	status = "okay";
-
-	control@44e10620 {
-		status = "okay";
-	};
-
-	usb-phy@47401300 {
-		status = "okay";
-	};
-
-	usb-phy@47401b00 {
-		status = "okay";
-	};
-
-	usb@47401000 {
-		status = "okay";
-        dr_mode = "host";
-	};
-
-	usb@47401800 {
-		status = "okay";
-		dr_mode = "host";
-	};
-
-	dma-controller@47402000  {
-		status = "okay";
-	};
+    status = "okay";
 };
 
+&usb_ctrl_mod {
+    status = "okay";
+};
+
+/* usb0 used for sw load via RDNIS */
+&usb0_phy {
+    status = "okay";
+};
+
+&usb0 {
+    status = "okay";
+    dr_mode = "peripheral";
+};
+
+/* usb1 used for modem interface */
+&usb1_phy {
+    status = "okay";
+};
+
+&usb1 {
+    status = "okay";
+    dr_mode = "host";
+};
+
+&cppi41dma  {
+    status = "okay";
+}; 
 
 /* ------------------------------------------------------------------------ */
 
