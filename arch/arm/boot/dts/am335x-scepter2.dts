@@ -146,6 +146,9 @@
 	};
 	/* Scepter 2 wm8737 config, this relates to davinci-evm.c, 12.288MHz for modified Scepter2, 12Mhz for the rest 
 	   to configure for slave mode, change pin mux direction below.   
+
+	   Right now we are using a custom version of davinci-evm driver. We should switch to simple-sound-card
+	   Documentation/devicetree/bindings/sound/simple-card.txt
 	*/
 	sound {
 		compatible = "ti,wm8737-evm-audio";
