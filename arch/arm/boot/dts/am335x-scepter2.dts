@@ -1,4 +1,4 @@
-/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board 
+1;95;0c/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -718,7 +718,7 @@
 /* Scepter 2 use only one emac, note that forcing emac1 to mdio addr 0 will
  properly direct MII2 to the correct and only available phy */
 
-#ifdef 0 /* no ethernet on 128MB boards */
+/* no ethernet on 128MB boards 
 
 &cpsw_emac0 {
     status = "okay";
@@ -732,7 +732,7 @@
 	phy-mode = "mii";
 };
 
-#endif
+*/
 
 &tscadc {
 	status = "okay";
