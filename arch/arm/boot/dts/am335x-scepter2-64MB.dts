@@ -21,7 +21,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0x80000000 0x08000000>; /* 128 MB SCEPTER2...doesn't seem to matter */
+		reg = <0x80000000 0x04000000>; /* 64 MB - SCEPT2 change */
 	};
 
 	vbat: fixedregulator@0 {
@@ -718,8 +718,6 @@
 /* Scepter 2 use only one emac, note that forcing emac1 to mdio addr 0 will
  properly direct MII2 to the correct and only available phy */
 
-#ifdef 0 /* no ethernet on 128MB boards */
-
 &cpsw_emac0 {
     status = "okay";
 	phy_id = <&davinci_mdio>, <1>;
@@ -732,7 +730,6 @@
 	phy-mode = "mii";
 };
 
-#endif
 
 &tscadc {
 	status = "okay";
