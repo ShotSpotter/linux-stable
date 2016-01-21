@@ -1,4 +1,4 @@
-1;95;0c/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board 
+/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -21,7 +21,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0x80000000 0x08000000>; /* 128 MB SCEPTER2...doesn't seem to matter */
+		reg = <0x80000000 0x08000000>; /* 128 MB - SCEPT2 change */
 	};
 
 	vbat: fixedregulator@0 {
@@ -702,7 +702,7 @@
 };
 
 &mac {
-    status = "okay";
+    status = "disabled";
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&cpsw_default>;
 	pinctrl-1 = <&cpsw_sleep>;
@@ -718,21 +718,17 @@
 /* Scepter 2 use only one emac, note that forcing emac1 to mdio addr 0 will
  properly direct MII2 to the correct and only available phy */
 
-/* no ethernet on 128MB boards 
-
 &cpsw_emac0 {
-    status = "okay";
+    status = "disabled";
 	phy_id = <&davinci_mdio>, <1>;
 	phy-mode = "mii";
 };
 
 &cpsw_emac1 {
-    status = "okay";
+    status = "disabled";
 	phy_id = <&davinci_mdio>, <0>;
 	phy-mode = "mii";
 };
-
-*/
 
 &tscadc {
 	status = "okay";
