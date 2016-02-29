@@ -13,6 +13,47 @@
 / {
 	model = "TI AM335x BeagleBone Black";
 	compatible = "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
+
+
+leds {
+pinctrl-names = "default";
+pinctrl-0 = <&artfusion_gpio_pins_default>;
+compatible = "gpio-leds";
+
+led@1 {
+        label = "clockcontrol";
+  gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
+    default-state = "on";
+      };
+
+
+led@2 {
+  label = "clockcontroltest";
+  gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
+    default-state = "on";
+      };
+};
+
+
+/* this doesn't have  a codec yet and can't work */
+        sound {
+                compatible = "simple-audio-card";
+		simple-audio-card,format = "dsp_b";
+		simple-audio-card,name = "wm5102";
+		simple-audio-card,bitclock-master = <&dailink0_master>;
+		simple-audio-cad,frame-master = <&dailink0_master>;
+		simple-audio-card,cpu {
+              	  sound-dai = <&mcasp0>;
+		};
+
+		dailink0_master: simple-audio-card,codec {
+				 sound-dai = <&wm5102>;
+		};
+        };
+
+
+
+
 };
 
 &ldo3_reg {
@@ -64,6 +105,38 @@
 			0x1b0 0x03      /* xdma_event_intr0, OMAP_MUX_MODE3 | AM33XX_PIN_OUTPUT */
 		>;
 	};
+
+
+artfusion_gpio_pins_default: artfusion_gpio_pins_default {
+pinctrl-single,pins = <
+0x164 ( PIN_INPUT | MUX_MODE7 ) /* (C18) eCAP0_in_PWM0_out.gpio0[7] */
+0x44 ( PIN_OUTPUT | MUX_MODE7 ) /* (V14) gpmc_a1.gpio1[17] */
+0x6c ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (V17) gpmc_a11.gpio1[27] */
+>;
+};
+
+
+mcasp0_slave_pins_default: mcasp0_slave_pins_default {
+pinctrl-single,pins = <
+0x1a0 ( PIN_INPUT | MUX_MODE0 ) /* (B12) mcasp0_aclkr.mcasp0_aclkr */
+0x1a4 ( PIN_INPUT | MUX_MODE0 ) /* (C13) mcasp0_fsr.mcasp0_fsr */
+0x198 ( PIN_INPUT | MUX_MODE0 ) /* (D12) mcasp0_axr0.mcasp0_axr0 */
+0x19c ( PIN_OUTPUT | MUX_MODE2 ) /* (C12) mcasp0_ahclkr.mcasp0_axr2 */
+>;
+};
+
+
+wm5102_i2c_pins_default: wm5102_i2c_pins_default {
+pinctrl-single,pins = <
+0x15c ( PIN_INPUT | MUX_MODE2 ) /* (A16) spi0_cs0.I2C1_SCL */
+0x158 ( PIN_INPUT | MUX_MODE2 ) /* (B16) spi0_d1.I2C1_SDA */
+>;
+};
+
+
+
+
+
 };
 
 &lcdc {
@@ -90,6 +163,37 @@
 		};
 	};
 };
+
+
+
+&i2c1 {
+      pinctrl-names = "default";
+      pintctrl-0 = <&wm5102_i2c_pins_default>;
+      status = "okay";
+      
+      wm5102: wm5102 {
+      	      compatible = "wlf,wm5102";
+      	      reg = <0x34>;
+      };
+};
+
+
+&mcasp0 {
+        pinctrl-names = "default";
+        pinctrl-0 = <&mcasp0_slave_pins_default>;
+
+        status = "okay";
+
+        op-mode = <0>;          /* MCASP_IIS_MODE */
+	tdm-slots = <6>;
+        /* 4 serializers */
+        serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX - 0 2 0 0 */
+                2 0 0 0
+        >;
+        tx-num-evt = <32>;
+        rx-num-evt = <32>;
+};
+
 
 &rtc {
 	system-power-controller;
