@@ -35,20 +35,42 @@ led@2 {
 };
 
 
-/* this doesn't have  a codec yet and can't work */
-        sound {
-                compatible = "simple-audio-card";
-		simple-audio-card,format = "dsp_b";
-		simple-audio-card,name = "wm5102";
-		simple-audio-card,bitclock-master = <&dailink0_master>;
-		simple-audio-cad,frame-master = <&dailink0_master>;
-		simple-audio-card,cpu {
-              	  sound-dai = <&mcasp0>;
-		};
+ldo18: ldo18 {
+      compatible = "regular-fixed";
+      regulator-name = "DC_1V8";
+      regulator-min-microvolt = <1800000>;
+      regulator-max-microvolt = <1800000>;
+      enable-active-high;
+      regulator-always-on;
+        };
 
-		dailink0_master: simple-audio-card,codec {
-				 sound-dai = <&wm5102>;
-		};
+ldo55: ldo55 {
+      compatible = "regular-fixed";
+      regulator-name = "DC_5V5";
+      regulator-min-microvolt = <5000000>;
+      regulator-max-microvolt = <5500000>;
+      enable-active-high;
+      regulator-always-on;
+        };
+
+
+
+/* would like to use this instead:
+                compatible = "simple-audio-card";
+ */
+        sound {
+                compatible = "ti,wm5102-evm-audio";
+                ti,model = "WM5012";
+                ti,audio-codec = <&wm5102>;
+                ti,mcasp-controller = <&mcasp0>;
+                ti,codec-clock-rate = <24576000>;
+		ti,audio-routing =
+				 "IN1L", "Line In",
+				 "IN1R", "Line In",
+				 "IN2L", "Line In",
+				 "IN2R", "Line In",
+				 "IN3L", "Line In",
+				 "IN3R", "Line In";
         };
 
 
@@ -165,16 +187,27 @@ pinctrl-single,pins = <
 };
 
 
-
 &i2c1 {
       pinctrl-names = "default";
       pintctrl-0 = <&wm5102_i2c_pins_default>;
       status = "okay";
+      clock-frequency = <400000>;
+
       
-      wm5102: wm5102 {
+      wm5102: wm5102@34 {
       	      compatible = "wlf,wm5102";
       	      reg = <0x34>;
+	      status = "okay";
+	      LDOVDD-supply  = <&ldo18>;
+	      AVDD-supply    = <&ldo18>;
+	      DBVDD1-supply  = <&ldo18>;
+	      DBVDD2-supply  = <&ldo18>;
+	      DBVDD3-supply  = <&ldo18>;
+	      CPVDD-supply   = <&ldo18>;
+	      SPKVDDL-supply = <&ldo55>;
+	      SPKVDDR-supply = <&ldo55>;
       };
+
 };
 
 

@@ -331,6 +331,18 @@ static struct snd_soc_card da850_snd_soc_card = {
  * filled with data from dt node.
  */
 
+
+static struct snd_soc_dai_link evm_dai_wm5102 = {
+  .name = "WM5102",
+  .stream_name= "AIF1 Capture", /* from sound/soc/codec/wm5102.c line 1756 */
+  .codec_dai_name = "wm5102-aif1", /* line 1745 */
+  .ops = &evm_ops,
+  .dai_fmt = SND_SOC_DAIFMT_DSP_B | /* DSP B */
+  SND_SOC_DAIFMT_CBM_CFM | /* codec is clock master and frame master */
+  SND_SOC_DAIFMT_NB_NF, /* invert bitclock, normal frame (soc-dai.h) */
+  .capture_only = true, /* fixme not really true */
+};
+
 static struct snd_soc_dai_link evm_dai_wm8737 = {
   .name= "WM8737",
   .stream_name= "Capture", /* comes from wm8737 driver */
@@ -354,6 +366,10 @@ static struct snd_soc_dai_link evm_dai_tlv320aic3x = {
 };
 
 static const struct of_device_id davinci_evm_dt_ids[] = {
+  {
+    .compatible = "ti,wm5102-evm-audio",
+    .data = &evm_dai_wm5102,
+  },
   {
     .compatible = "ti,wm8737-evm-audio",
     .data = &evm_dai_wm8737,
