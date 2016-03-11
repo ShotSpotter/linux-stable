@@ -741,15 +741,20 @@
 };
 
 &mmc1 {	status = "okay";
+	compatible = "ti,am33xx-hsmmc"; /* very similar to ti,omap4-hsmmc */
+	max-frequency = <48000000>;
 	vmmc-supply = <&vmmc_reg>;
 	bus-width = <8>;
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&mmc1_pins_default>;
 	pinctrl-1 = <&mmc1_pins_sleep>;
 	ti,non-removable;
+	disable-wp;
 };
 
 &mmc2 {
+	compatible = "ti,am33xx-hsmmc"; /* very similar to ti,omap4-hsmmc */
+	max-frequency = <48000000>;
 	vmmc-supply = <&vmmc_reg>;
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&mmc2_pins_default>;
@@ -757,34 +762,7 @@
 	bus-width = <8>;
 	status = "okay";
 	ti,non-removable;
-
-/* these are on the crossbar and are outlined in the
-	   xbar-event-map element
-	   KEEP this as reference
-	   --------------------------------------------------
-	dmas = <&edma 12
-		&edma 13>;
-	dma-names = "tx", "rx";
-	status = "okay";
-	vmmc-supply = <&vmmc_reg>;
-	bus-width = <4>;
-	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&mmc3_pins_default &wlan_pins_default>;
-	pinctrl-1 = <&mmc3_pins_sleep &wlan_pins_sleep>;
-	ti,non-removable;
-	ti,needs-special-hs-handling;
-	cap-power-off-card;
-	keep-power-in-suspend;
-
-	#address-cells = <1>;
-	#size-cells = <0>;
-	wlcore: wlcore@0 {
-		compatible = "ti,wlcore";
-		reg = <2>;
-		interrupt-parent = <&gpio3>;
-		interrupts = <17 IRQ_TYPE_NONE>;
-----------------------------------------------------------------*/
-
+	disable-wp;
 };
 
 &sham {
