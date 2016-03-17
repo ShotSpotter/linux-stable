@@ -43,13 +43,13 @@
 		compatible = "gpio-leds";
 
 		led@1 {
-		      label = "scept:green:usr0";
+		      label = "led_grn";
 		      gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
 
 		led@2 {
-		      label = "scept:red:usr1";
+		      label = "led_red";
 		      gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
@@ -64,45 +64,45 @@
 		compatible = "gpio-leds";
 
 		gpsctl@1 {
-		      label = "scept:oe:gps";
+		      label = "gps_oe";
 		      gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 
 		gpsctl@2 {
-		      label = "scept:rst:gps";
+		      label = "gps_rst";
 		      gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
 		      default-state = "off";
 		};
 
 		gpsctl@3 {
-		      label = "scept:pwron:gps";
+		      label = "gps_pwron";
 		      gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 
-/* Turn "on" to reset an mmc from software. We don't think you should do this. */
+/*  Turn "on" to reset an mmc from software. We don't think you should do this. */
 
 		gpsctl@4 {
-			 label = "scept:rst:mmc0";
+			 label = "mmc0_rst";
 			 gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
 			 default-state = "off";
 		};
 
 		gpsctl@5 {
-			 label = "scept:rst:mmc1";
+			 label = "mmc1_rst";
 			 gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
 			 default-state = "off";
 		};
 
 		gpsctl@6 {
-		      label = "scept:pwr:aud";
+		      label = "adc_pwron";
 		      gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
 
 		gpsctl@7 {
-		      label = "scept:i2cen:aud";
+		      label = "adc_i2c_en";
 		      gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
@@ -114,31 +114,33 @@
    		pinctrl-names = "default", "sleep";
 		pinctrl-0 = <&user_cellctl_default>;
 		pinctrl-1 = <&user_cellctl_sleep>;
-
 		compatible = "gpio-leds";
 
-/* XXX Perhaps add reset control in kernel or standalone app, currently doing it by user command line  */
+/* Tom had this commented out, so we are maintaining that.
+ * This gpio is called directly in /opt/sst/modem/power-on | -off
+ * Since that code works, we leave this out of the dt.
+ */
 #if 0
 		cellctl@1 {
-		      label = "scept:on:cell";
+		      label = "cell_on";
 		      gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 #endif
 		cellctl@2 {
-		      label = "scept:pwron:cell";
+		      label = "cell_pwron";
 		      gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 
 		cellctl@3 {
-		      label = "scept:oe:cell";
+		      label = "cell_oe";
 		      gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
 		      default-state = "off";
 		};
 
 		cellctl@4 {
-		      label = "scept:rst:cell";
+		      label = "cell_rst";
 		      gpios = <&gpio2 25 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
@@ -190,6 +192,13 @@
 
 &am33xx_pinmux {
 	pinctrl-names = "default";
+
+	/* interrupt from pmic */
+	pmic_int1_default: pmic_int1_default {
+		pinctrl-single,pins = <
+			0x8c ( PIN_INPUT | MUX_MODE7 ) /* (V12) gpmc_clk.gpio2[1] */
+		>;
+	};
 
         /* wm8737 control */
 	wm8737_pins_default: wm8737_pins_default {
