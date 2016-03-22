@@ -212,7 +212,7 @@ pinctrl-single,pins = <
 	      DBVDD2-supply  = <&ldo18>;
 	      DBVDD3-supply  = <&ldo18>;
 	      CPVDD-supply   = <&ldo18>;
-	      SPKVDDL-supply = <&ldo50>; / * fixed VDD_5V from BBB */
+	      SPKVDDL-supply = <&ldo50>; /* fixed VDD_5V from BBB */
 	      SPKVDDR-supply = <&ldo50>;
       };
 
