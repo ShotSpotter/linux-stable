@@ -44,9 +44,9 @@ ldo18: ldo18 {
       regulator-always-on;
         };
 
-ldo55: ldo55 {
+ldo50: ldo50 { /* BBB VCC_5V */
       compatible = "regular-fixed";
-      regulator-name = "DC_5V5";
+      regulator-name = "DC_5V0";
       regulator-min-microvolt = <5000000>;
       regulator-max-microvolt = <5500000>;
       enable-active-high;
@@ -194,26 +194,26 @@ pinctrl-single,pins = <
       status = "okay";
       clock-frequency = <400000>;
 
-      
-      wm5102: wm5102@34 {
+
+      wm5102: wm5102@1a {
       	      compatible = "wlf,wm5102";
-      	      reg = <0x34>;
+	      reg = <0x1a>;
 	      status = "okay";
-	      interrupts = <347>;  /* i don't knw what this is */
+	      interrupts = <347>;  /* i don't know what this is */
 	      interrupt-controller;
 	      #interrupt-cells = <2>;
 	      interrupt-parent = <&intc>;
 	      gpio-controller; /* or this */
 	      #gpio-cells = <2>;
-	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_LOW>;
-	      LDOVDD-supply  = <&ldo18>;
+	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_LOW>; /* allow /RESET wm5102 by driver */
+	      LDOVDD-supply  = <&ldo18>; /* fixed 1V8 regulator */
 	      AVDD-supply    = <&ldo18>;
 	      DBVDD1-supply  = <&ldo18>;
 	      DBVDD2-supply  = <&ldo18>;
 	      DBVDD3-supply  = <&ldo18>;
 	      CPVDD-supply   = <&ldo18>;
-	      SPKVDDL-supply = <&ldo55>;
-	      SPKVDDR-supply = <&ldo55>;
+	      SPKVDDL-supply = <&ldo50>; / * fixed VDD_5V from BBB */
+	      SPKVDDR-supply = <&ldo50>;
       };
 
 };
