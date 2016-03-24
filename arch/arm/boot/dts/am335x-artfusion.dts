@@ -9,6 +9,7 @@
 
 #include "am33xx.dtsi"
 #include "am335x-bone-common.dtsi"
+#include "dt-bindings/mfd/arizona.h"
 
 / {
 	model = "TI AM335x BeagleBone Black";
@@ -205,6 +206,13 @@ pinctrl-single,pins = <
 	      interrupt-parent = <&intc>;
 	      gpio-controller; /* or this */
 	      #gpio-cells = <2>;
+	      wlf,gpio-defaults = <
+		ARIZONA_GP_FN_TXLRCLK
+		ARIZONA_GP_DEFAULT
+		ARIZONA_GP_DEFAULT
+		ARIZONA_GP_DEFAULT
+		ARIZONA_GP_DEFAULT
+		>;
 	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_LOW>; /* allow /RESET wm5102 by driver */
 	      LDOVDD-supply  = <&ldo18>; /* fixed 1V8 regulator */
 	      AVDD-supply    = <&ldo18>;
