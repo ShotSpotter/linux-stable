@@ -37,7 +37,7 @@ led@2 {
 
 
 ldo18: ldo18 {
-      compatible = "regular-fixed";
+      compatible = "regulator-fixed";
       regulator-name = "DC_1V8";
       regulator-min-microvolt = <1800000>;
       regulator-max-microvolt = <1800000>;
@@ -46,7 +46,7 @@ ldo18: ldo18 {
         };
 
 ldo50: ldo50 { /* BBB VCC_5V */
-      compatible = "regular-fixed";
+      compatible = "regulator-fixed";
       regulator-name = "DC_5V0";
       regulator-min-microvolt = <5000000>;
       regulator-max-microvolt = <5500000>;
