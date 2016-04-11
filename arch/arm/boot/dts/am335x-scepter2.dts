@@ -257,8 +257,7 @@
 			0x11c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 )  /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
@@ -269,8 +268,7 @@
 			0x11c ( PIN_INPUT | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
