@@ -203,8 +203,8 @@
         /* wm8737 control */
 	wm8737_pins_default: wm8737_pins_default {
 		pinctrl-single,pins = <
-			0x18c ( PIN_INPUT | MUX_MODE0 ) /* (C16) I2C0_SCL.I2C0_SCL */
-			0x188 ( PIN_INPUT | MUX_MODE0 ) /* (C17) I2C0_SDA.I2C0_SDA */
+			0x18c ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (C16) I2C0_SCL.I2C0_SCL */
+			0x188 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (C17) I2C0_SDA.I2C0_SDA */
 		>;
 	};
 
