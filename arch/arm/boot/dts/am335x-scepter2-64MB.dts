@@ -1,4 +1,4 @@
-/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board 
+/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -21,7 +21,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0x80000000 0x04000000>; /* 64 MB - SCEPT2 change */
+		reg = <0x80000000 0x08000000>; /* 128 MB - SCEPT2 change */
 	};
 
 	vbat: fixedregulator@0 {
@@ -43,16 +43,16 @@
 		compatible = "gpio-leds";
 
 		led@1 {
-		      label = "scept:green:usr0";
+		      label = "led_grn";
 		      gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
 
 		led@2 {
-		      label = "scept:red:usr1";
+		      label = "led_red";
 		      gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
-		};		
+		};
 	};
 
 	gpsctls {
@@ -64,44 +64,45 @@
 		compatible = "gpio-leds";
 
 		gpsctl@1 {
-		      label = "scept:oe:gps";
+		      label = "gps_oe";
 		      gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 
 		gpsctl@2 {
-		      label = "scept:rst:gps";
+		      label = "gps_rst";
 		      gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
-		      default-state = "off";
-		};		
-
-		gpsctl@3 {
-		      label = "scept:pwron:gps";
-		      gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
-		      default-state = "on";
-		};		
-
-		/* Disable onboard eMMC0 by placing it in reset */
-		gpsctl@4 {
-		      label = "scept:rst:mmc0";
-		      gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
-		      default-state = "on";
-		};		
-
-		gpsctl@5 {
-		      label = "scept:rst:mmc1";
-		      gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
 		      default-state = "off";
 		};
 
+		gpsctl@3 {
+		      label = "gps_pwron";
+		      gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
+		      default-state = "on";
+		};
+
+/*  Turn "on" to reset an mmc from software. We don't think you should do this. */
+
+		gpsctl@4 {
+			 label = "mmc0_rst";
+			 gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+			 default-state = "off";
+		};
+
+		gpsctl@5 {
+			 label = "mmc1_rst";
+			 gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+			 default-state = "off";
+		};
+
 		gpsctl@6 {
-		      label = "scept:pwr:aud";
+		      label = "adc_pwron";
 		      gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
 
 		gpsctl@7 {
-		      label = "scept:i2cen:aud";
+		      label = "adc_i2c_en";
 		      gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
 		      default-state = "on";
 		};
@@ -113,39 +114,41 @@
    		pinctrl-names = "default", "sleep";
 		pinctrl-0 = <&user_cellctl_default>;
 		pinctrl-1 = <&user_cellctl_sleep>;
-
 		compatible = "gpio-leds";
 
-/* XXX Perhaps add reset control in kernel or standalone app, currently doing it by user command line  */
+/* Tom had this commented out, so we are maintaining that.
+ * This gpio is called directly in /opt/sst/modem/power-on | -off
+ * Since that code works, we leave this out of the dt.
+ */
 #if 0
 		cellctl@1 {
-		      label = "scept:on:cell";
+		      label = "cell_on";
 		      gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
 #endif
 		cellctl@2 {
-		      label = "scept:pwron:cell";
+		      label = "cell_pwron";
 		      gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
-		};		
+		};
 
 		cellctl@3 {
-		      label = "scept:oe:cell";
+		      label = "cell_oe";
 		      gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
 		      default-state = "off";
-		};		
+		};
 
 		cellctl@4 {
-		      label = "scept:rst:cell";
+		      label = "cell_rst";
 		      gpios = <&gpio2 25 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
-		};		
+		};
 
 
 	};
-	/* Scepter 2 wm8737 config, this relates to davinci-evm.c, 12.288MHz for modified Scepter2, 12Mhz for the rest 
-	   to configure for slave mode, change pin mux direction below.   
+	/* Scepter 2 wm8737 config, this relates to davinci-evm.c, 12.288MHz for modified Scepter2, 12Mhz for the rest
+	   to configure for slave mode, change pin mux direction below.
 
 	   Right now we are using a custom version of davinci-evm driver. We should switch to simple-sound-card
 	   Documentation/devicetree/bindings/sound/simple-card.txt
@@ -190,11 +193,18 @@
 &am33xx_pinmux {
 	pinctrl-names = "default";
 
+	/* interrupt from pmic */
+	pmic_int1_default: pmic_int1_default {
+		pinctrl-single,pins = <
+			0x8c ( PIN_INPUT | MUX_MODE7 ) /* (V12) gpmc_clk.gpio2[1] */
+		>;
+	};
+
         /* wm8737 control */
 	wm8737_pins_default: wm8737_pins_default {
 		pinctrl-single,pins = <
-			0x18c ( PIN_INPUT | MUX_MODE0 ) /* (C16) I2C0_SCL.I2C0_SCL */
-			0x188 ( PIN_INPUT | MUX_MODE0 ) /* (C17) I2C0_SDA.I2C0_SDA */
+			0x18c ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (C16) I2C0_SCL.I2C0_SCL */
+			0x188 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (C17) I2C0_SDA.I2C0_SDA */
 		>;
 	};
 
@@ -247,8 +257,7 @@
 			0x11c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT_PULLDOWN | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 )  /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
@@ -259,8 +268,7 @@
 			0x11c ( PIN_INPUT | MUX_MODE3 ) /* (J18) gmii1_txd3.uart4_rxd */
 			0x120 ( PIN_OUTPUT | MUX_MODE3 ) /* (K15) gmii1_txd2.uart4_txd */
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
-			/* 0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  (V5) lcd_pclk.gpio2[24] */
-			0xe8 ( PIN_INPUT_PULLDOWN | MUX_MODE6 ) /* (V5) lcd_pclk.pr1_pru1_pru_r31[10] */
+			0xe8 ( PIN_INPUT | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
 		>;
 	};
@@ -271,45 +279,48 @@
 	cpsw_default: cpsw_default {
 		pinctrl-single,pins = <
 			/* Slave 2 */
-		0x78 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U18) gpmc_be1n.gmii2_col */
-		0x70 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T17) gpmc_wait0.gmii2_crs */
-		0x74 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U17) gpmc_wpn.gmii2_rxer */
 		0x40 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (R13) gpmc_a0.gmii2_txen */
 		0x44 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V14) gpmc_a1.gmii2_rxdv */
+		0x48 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (U14) gpmc_a2.gmii2_txd3 */
+		0x4c ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (T14) gpmc_a3.gmii2_txd2 */
+		0x50 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (R14) gpmc_a4.gmii2_txd1 */
+		0x54 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (V15) gpmc_a5.gmii2_txd0 */
 		0x58 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U15) gpmc_a6.gmii2_txclk */
 		0x5c ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T15) gpmc_a7.gmii2_rxclk */
-		0x54 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (V15) gpmc_a5.gmii2_txd0 */
-		0x50 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (R14) gpmc_a4.gmii2_txd1 */
-		0x4c ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (T14) gpmc_a3.gmii2_txd2 */
-		0x48 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (U14) gpmc_a2.gmii2_txd3 */
-		0x6c ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V17) gpmc_a11.gmii2_rxd0 */
-		0x68 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T16) gpmc_a10.gmii2_rxd1 */
-		0x64 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U16) gpmc_a9.gmii2_rxd2 */
 		0x60 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V16) gpmc_a8.gmii2_rxd3 */
+		0x64 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U16) gpmc_a9.gmii2_rxd2 */
+		0x68 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T16) gpmc_a10.gmii2_rxd1 */
+		0x6c ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V17) gpmc_a11.gmii2_rxd0 */
+		0x70 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T17) gpmc_wait0.gmii2_crs */
+		0x74 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U17) gpmc_wpn.gmii2_rxer */
+		0x78 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U18) gpmc_be1n.gmii2_col */
 
+		0x9c ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (T6) gpmc_be0n_cle.gpio2[5] ETH_RST */
+		0x20 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (U10) gpmc_ad8.gpio0[22] ETH_INT */
 		>;
 	};
 
 	cpsw_sleep: cpsw_sleep {
 		pinctrl-single,pins = <
 			/* Slave 2 reset value */
+		0x40 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (R13) gpmc_a0.gmii2_txen */
+		0x44 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V14) gpmc_a1.gmii2_rxdv */
+		0x48 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (U14) gpmc_a2.gmii2_txd3 */
+		0x4c ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (T14) gpmc_a3.gmii2_txd2 */
+		0x50 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (R14) gpmc_a4.gmii2_txd1 */
+		0x54 ( PIN_OUTPUT_PULLDOWN | MUX_MODE1 ) /* (V15) gpmc_a5.gmii2_txd0 */
+		0x58 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U15) gpmc_a6.gmii2_txclk */
+		0x5c ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T15) gpmc_a7.gmii2_rxclk */
+		0x60 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V16) gpmc_a8.gmii2_rxd3 */
+		0x64 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U16) gpmc_a9.gmii2_rxd2 */
+		0x68 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T16) gpmc_a10.gmii2_rxd1 */
+		0x6c ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (V17) gpmc_a11.gmii2_rxd0 */
+		0x70 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (T17) gpmc_wait0.gmii2_crs */
+		0x74 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U17) gpmc_wpn.gmii2_rxer */
+		0x78 ( PIN_INPUT_PULLDOWN | MUX_MODE1 ) /* (U18) gpmc_be1n.gmii2_col */
 
-		0x78 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (U18) gpmc_be1n.gmii2_col */
-		0x70 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (T17) gpmc_wait0.gmii2_crs */
-		0x74 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (U17) gpmc_wpn.gmii2_rxer */
-		0x40 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (R13) gpmc_a0.gmii2_txen */
-		0x44 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V14) gpmc_a1.gmii2_rxdv */
-		0x58 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (U15) gpmc_a6.gmii2_txclk */
-		0x5c ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (T15) gpmc_a7.gmii2_rxclk */
-		0x54 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V15) gpmc_a5.gmii2_txd0 */
-		0x50 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (R14) gpmc_a4.gmii2_txd1 */
-		0x4c ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (T14) gpmc_a3.gmii2_txd2 */
-		0x48 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (U14) gpmc_a2.gmii2_txd3 */
-		0x6c ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V17) gpmc_a11.gmii2_rxd0 */
-		0x68 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (T16) gpmc_a10.gmii2_rxd1 */
-		0x64 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (U16) gpmc_a9.gmii2_rxd2 */
-		0x60 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (V16) gpmc_a8.gmii2_rxd3 */
-
+		0x9c ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (T6) gpmc_be0n_cle.gpio2[5] ETH_RST */
+		0x20 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (U10) gpmc_ad8.gpio0[22] ETH_INT */
 		>;
 	};
 
@@ -329,70 +340,71 @@
 		>;
 	};
 
+	/* mmc1 in device tree is mmc0 to everyone else */
 	mmc1_pins_default: pinmux_mmc1_pins {
 		pinctrl-single,pins = <
-			0x0F0 (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_dat3.mmc0_dat3 */
-			0x0F4 (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_dat2.mmc0_dat2 */
-			0x0F8 (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_dat1.mmc0_dat1 */
-			0x0FC (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_dat0.mmc0_dat0 */
-			0x100 (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_clk.mmc0_clk */
-			0x104 (PIN_INPUT_PULLUP | MUX_MODE0)    /* mmc0_cmd.mmc0_cmd */
-
-
-/* Scepter 2 remove WP & CD signals as they are not used on SD card */
-#if 0
-			0x7C (PIN_INPUT_PULLUP | MUX_MODE7)    /* (V6) INTR BOARD DETECT gpmc_csn0.gpio1[29] */
-			0x160 (PIN_INPUT | MUX_MODE7)           /* spi0_cs1.gpio0_6 */
-#endif
+				    0x100 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G17) mmc0_clk.mmc0_clk */
+				    0x104 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G18) mmc0_cmd.mmc0_cmd */
+				    0x0fc ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G16) mmc0_dat0.mmc0_dat0 */
+				    0x0f8 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G15) mmc0_dat1.mmc0_dat1 */
+				    0x0f4 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (F18) mmc0_dat2.mmc0_dat2 */
+				    0x0f0 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (F17) mmc0_dat3.mmc0_dat3 */
+				    0x138 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L16) gmii1_rxd2.mmc0_dat4 */
+				    0x134 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L17) gmii1_rxd3.mmc0_dat5 */
+				    0x130 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L18) gmii1_rxclk.mmc0_dat6 */
+				    0x12c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (K18) gmii1_txclk.mmc0_dat7 */
+				    /* support "interface board is connected" detection */
+				    0x140 ( PIN_INPUT | MUX_MODE7 )        /* (M16) gmii1_rxd0.gpio2[21] */
 		>;
 	};
 
+	/* Tom Riddle had thse as pulldown, but schematic will pull them up, so why fight it? Also we never sleep */
 	mmc1_pins_sleep: pinmux_mmc1_pins_sleep {
 		pinctrl-single,pins = <
-			0x0F0 (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x0F4 (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x0F8 (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x0FC (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x100 (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x104 (PIN_INPUT_PULLDOWN | MUX_MODE7)
-			0x7C (PIN_INPUT_PULLUP | MUX_MODE7)    /* (V6) gpmc_csn0.gpio1[29] */
-
-/* Scepter 2 remove WP & CD signals as they are not used on SD card */
-#if 0
-			0x7C (PIN_INPUT_PULLUP | MUX_MODE7)    /* (V6) INTR BOARD DETECT gpmc_csn0.gpio1[29] */
-			0x1A0 (PIN_INPUT_PULLUP | MUX_MODE7)    /* mcasp0_aclkr.gpio3_18 */
-#endif
+				    0x100 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G17) mmc0_clk.mmc0_clk */
+				    0x104 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G18) mmc0_cmd.mmc0_cmd */
+				    0x0fc ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G16) mmc0_dat0.mmc0_dat0 */
+				    0x0f8 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G15) mmc0_dat1.mmc0_dat1 */
+				    0x0f4 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (F18) mmc0_dat2.mmc0_dat2 */
+				    0x0f0 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (F17) mmc0_dat3.mmc0_dat3 */
+				    0x138 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L16) gmii1_rxd2.mmc0_dat4 */
+				    0x134 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L17) gmii1_rxd3.mmc0_dat5 */
+				    0x130 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (L18) gmii1_rxclk.mmc0_dat6 */
+				    0x12c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (K18) gmii1_txclk.mmc0_dat7 */
+				    /* support "interface board is connected" detection */
+				    0x140 ( PIN_INPUT | MUX_MODE7 )        /* (M16) gmii1_rxd0.gpio2[21] */
 		>;
 	};
 
-	/* Scepter2 mmc2 8 bit part is mapped to HW interface mmc1  */
+	/* Device tree mcc2 is mmc1 to everyone else  */
 	mmc2_pins_default: pinmux_mmc2_pins_default {
 		pinctrl-single,pins = <
-			0x80 (PIN_INPUT_PULLUP | MUX_MODE2) /* gpmc_csn1.mmc1_clk */
-			0x84 (PIN_INPUT_PULLUP | MUX_MODE2) /* gpmc_csn2.mmc1_cmd */
-			0x00 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad0.mmc1_dat0 */
-			0x04 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad1.mmc1_dat1 */
-			0x08 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad2.mmc1_dat2 */
-			0x0c (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad3.mmc1_dat3 */
-			0x10 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad4.mmc1_dat4 */
-			0x14 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad5.mmc1_dat5 */
-			0x18 (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad6.mmc1_dat6 */
-			0x1c (PIN_INPUT_PULLUP | MUX_MODE1) /* gpmc_ad7.mmc1_dat7 */
+				    0x80 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (U9) gpmc_csn1.mmc1_clk */
+				    0x84 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (V9) gpmc_csn2.mmc1_cmd */
+				    0x00 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (U7) gpmc_ad0.mmc1_dat0 */
+				    0x04 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (V7) gpmc_ad1.mmc1_dat1 */
+				    0x08 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (R8) gpmc_ad2.mmc1_dat2 */
+				    0x0c ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (T8) gpmc_ad3.mmc1_dat3 */
+				    0x10 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (U8) gpmc_ad4.mmc1_dat4 */
+				    0x14 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (V8) gpmc_ad5.mmc1_dat5 */
+				    0x18 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (R9) gpmc_ad6.mmc1_dat6 */
+				    0x1c ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (T9) gpmc_ad7.mmc1_dat7 */
 		>;
 	};
 
+	/* See above, dont fight hardware */
 	mmc2_pins_sleep: pinmux_mmc2_pins_sleep {
 		pinctrl-single,pins = <
-			0x80 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_csn1.mmc1_clk */
-			0x84 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_csn2.mmc1_cmd */
-			0x00 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad0.mmc1_dat0 */
-			0x04 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad1.mmc1_dat1 */
-			0x08 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad2.mmc1_dat2 */
-			0x0c (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad3.mmc1_dat3 */
-			0x10 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad4.mmc1_dat4 */
-			0x14 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad5.mmc1_dat5 */
-			0x18 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad6.mmc1_dat6 */
-			0x1c (PIN_INPUT_PULLDOWN | MUX_MODE7) /* gpmc_ad7.mmc1_dat7 */
+				    0x80 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (U9) gpmc_csn1.mmc1_clk */
+				    0x84 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (V9) gpmc_csn2.mmc1_cmd */
+				    0x00 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (U7) gpmc_ad0.mmc1_dat0 */
+				    0x04 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (V7) gpmc_ad1.mmc1_dat1 */
+				    0x08 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (R8) gpmc_ad2.mmc1_dat2 */
+				    0x0c ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (T8) gpmc_ad3.mmc1_dat3 */
+				    0x10 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (U8) gpmc_ad4.mmc1_dat4 */
+				    0x14 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (V8) gpmc_ad5.mmc1_dat5 */
+				    0x18 ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (R9) gpmc_ad6.mmc1_dat6 */
+				    0x1c ( PIN_INPUT_PULLUP | MUX_MODE1 ) /* (T9) gpmc_ad7.mmc1_dat7 */
 		>;
 	};
 
@@ -409,7 +421,7 @@
 			0x3c (PIN_OUTPUT_PULLUP | MUX_MODE7)	/* gpmc_ad15.gpio1_15 scepter2 LED_RED */
 		>;
 	};
-	
+
 	user_gpsctl_default: user_gpsctl_default {
 		pinctrl-single,pins = <
  			0x108 (PIN_OUTPUT_PULLUP | MUX_MODE7)	/* (H16) mii1_col.gpio3[0] 0x108 GPIO3_0 scepter2 GPS_OE */
@@ -489,6 +501,14 @@
 
 /* ===================================================================================== */
 /* ===================================================================================== */
+
+/* avoid lockup on boot*/
+
+
+&rtc {
+     clock-names="int-clk";
+     ti,hwmods ="disabled";
+};
 
 &uart0 {
 	pinctrl-names = "default";
@@ -597,7 +617,7 @@
 
 &cppi41dma  {
     status = "okay";
-}; 
+};
 
 /* ------------------------------------------------------------------------ */
 
@@ -693,16 +713,16 @@
 		};
 
 		vmmc_reg: regulator@12 {
-		/*	Scepter 2 has fixed 3.3v */ 
+		/*	Scepter 2 has fixed 3.3v */
 			regulator-min-microvolt = <1800000>;
-			regulator-max-microvolt = <3300000>; 
+			regulator-max-microvolt = <3300000>;
 			regulator-always-on;
 		};
 	};
 };
 
 &mac {
-    status = "okay";
+    status = "disabled";
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&cpsw_default>;
 	pinctrl-1 = <&cpsw_sleep>;
@@ -719,17 +739,16 @@
  properly direct MII2 to the correct and only available phy */
 
 &cpsw_emac0 {
-    status = "okay";
+    status = "disabled";
 	phy_id = <&davinci_mdio>, <1>;
 	phy-mode = "mii";
 };
 
 &cpsw_emac1 {
-    status = "okay";
+    status = "disabled";
 	phy_id = <&davinci_mdio>, <0>;
 	phy-mode = "mii";
 };
-
 
 &tscadc {
 	status = "okay";
@@ -740,24 +759,20 @@
 };
 
 &mmc1 {	status = "okay";
+	compatible = "ti,am33xx-hsmmc"; /* very similar to ti,omap4-hsmmc */
+	max-frequency = <48000000>;
 	vmmc-supply = <&vmmc_reg>;
-	bus-width = <4>;
+	bus-width = <8>;
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&mmc1_pins_default>;
 	pinctrl-1 = <&mmc1_pins_sleep>;
 	ti,non-removable;
-
-/* Scepter2 There are two HW options for mmc1 ie: SDCard or onboard eMMC0 
-   SDCard has it's CD pulled up if the Interface board is attached net: INTR_CARD_DET
-   it is pulled down if not. There is no WP 
-*/
-	cd-gpios = <&gpio1 29 GPIO_ACTIVE_HIGH>;
-#if 0
-	wp-gpios = <&gpio3 18 GPIO_ACTIVE_HIGH>;
-#endif
+	disable-wp;
 };
 
 &mmc2 {
+	compatible = "ti,am33xx-hsmmc"; /* very similar to ti,omap4-hsmmc */
+	max-frequency = <48000000>;
 	vmmc-supply = <&vmmc_reg>;
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&mmc2_pins_default>;
@@ -765,34 +780,7 @@
 	bus-width = <8>;
 	status = "okay";
 	ti,non-removable;
-
-/* these are on the crossbar and are outlined in the
-	   xbar-event-map element 
-	   KEEP this as reference
-	   --------------------------------------------------
-	dmas = <&edma 12
-		&edma 13>;
-	dma-names = "tx", "rx";
-	status = "okay";
-	vmmc-supply = <&vmmc_reg>;
-	bus-width = <4>;
-	pinctrl-names = "default", "sleep";
-	pinctrl-0 = <&mmc3_pins_default &wlan_pins_default>;
-	pinctrl-1 = <&mmc3_pins_sleep &wlan_pins_sleep>;
-	ti,non-removable;
-	ti,needs-special-hs-handling;
-	cap-power-off-card;
-	keep-power-in-suspend;
-
-	#address-cells = <1>;
-	#size-cells = <0>;
-	wlcore: wlcore@0 {
-		compatible = "ti,wlcore";
-		reg = <2>;
-		interrupt-parent = <&gpio3>;
-		interrupts = <17 IRQ_TYPE_NONE>; 
-----------------------------------------------------------------*/
-
+	disable-wp;
 };
 
 &sham {
@@ -806,5 +794,3 @@
 &wkup_m3 {
 	ti,scale-data-fw = "am335x-evm-scale-data.bin";
 };
-
-
