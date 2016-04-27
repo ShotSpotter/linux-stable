@@ -158,7 +158,7 @@
 		#clock-cells = <0>;
 		compatible = "fixed-clock";
 		clock-frequency = <12288000>;
-	}
+	};
 
 	sound {
 	      status = "okay";
