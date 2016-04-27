@@ -21,7 +21,7 @@
 
 	memory {
 		device_type = "memory";
-		reg = <0x80000000 0x08000000>; /* 128 MB - SCEPT2 change */
+		reg = <0x80000000 0x04000000>; /* 64 MB - SCEPT2 change */
 	};
 
 	vbat: fixedregulator@0 {
@@ -722,7 +722,7 @@
 };
 
 &mac {
-    status = "disabled";
+    status = "okay";
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&cpsw_default>;
 	pinctrl-1 = <&cpsw_sleep>;
@@ -739,13 +739,13 @@
  properly direct MII2 to the correct and only available phy */
 
 &cpsw_emac0 {
-    status = "disabled";
+    status = "ok";
 	phy_id = <&davinci_mdio>, <1>;
 	phy-mode = "mii";
 };
 
 &cpsw_emac1 {
-    status = "disabled";
+    status = "ok";
 	phy_id = <&davinci_mdio>, <0>;
 	phy-mode = "mii";
 };
