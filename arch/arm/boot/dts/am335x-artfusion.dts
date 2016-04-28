@@ -49,30 +49,63 @@ ldo50: ldo50 { /* BBB VCC_5V */
       compatible = "regulator-fixed";
       regulator-name = "DC_5V0";
       regulator-min-microvolt = <5000000>;
-      regulator-max-microvolt = <5500000>;
+      regulator-max-microvolt = <5000000>;
       enable-active-high;
       regulator-always-on;
         };
 
 
+clk_audio_fixed: clk_audio_fixed {
+      #clock-cells = <0>;
+      compatible = "fixed-clock";
+      clock-frequency = <24576000>;
+};
 
-/* would like to use this instead:
-                compatible = "simple-audio-card";
- */
-        sound {
-                compatible = "ti,wm5102-evm-audio";
-                ti,model = "WM5012";
-                ti,audio-codec = <&wm5102>;
-                ti,mcasp-controller = <&mcasp0>;
-                ti,codec-clock-rate = <24576000>;
-		ti,audio-routing =
+
+clk_audio: clk_audio {
+      #clock-cells = <0>;
+      compatible = "gpio-gate-clock";
+      clocks = <&clk_audio_fixed>;
+      enable-gpios = <&gpio1 27 0>; /* BeagleBone Black Clk enable on GPIO1_27 */
+};
+
+
+sound {
+    status = "okay";
+    compatible = "simple-audio-card";
+    simple-audio-card,name = "WM5102";
+    simple-audio-card,widgets =
+        "Line", "Line In";
+    simple-audio-card,routing =
 				 "IN1L", "Line In",
 				 "IN1R", "Line In",
 				 "IN2L", "Line In",
 				 "IN2R", "Line In",
 				 "IN3L", "Line In",
 				 "IN3R", "Line In";
-        };
+    simple-audio-card,dai-link {
+	format = "dsp_b";
+	bitclock-master = <&sound_master>;
+	frame-master = <&sound_master>;
+	cpu {
+		sound-dai = <&mcasp0>;
+		/*
+		dai-tdm-slot-num = <6>;
+		dai-tdm-slot-width = <32>;
+		*/
+	};
+	sound_master: codec {
+		sound-dai = <&wm5102>;
+		clocks = <&clk_audio>;
+		/*
+		dai-tdm-slot-num = <6>;
+		dai-tdm-slot-width = <32>;
+		*/
+	};
+    };
+
+};
+
 
 
 
@@ -134,7 +167,8 @@ artfusion_gpio_pins_default: artfusion_gpio_pins_default {
 pinctrl-single,pins = <
 0x164 ( PIN_INPUT | MUX_MODE7 ) /* (C18) eCAP0_in_PWM0_out.gpio0[7] */
 0x44 ( PIN_OUTPUT | MUX_MODE7 ) /* (V14) gpmc_a1.gpio1[17] */
-0x6c ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (V17) gpio1[27] */
+0x6c ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (V17) gpio1[27] 24.576MHz clock OE*/
+0x1ac ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (A14) mcasp0_ahclkx.gpio3[21] */
 >;
 };
 
@@ -153,11 +187,9 @@ wm5102_i2c_pins_default: wm5102_i2c_pins_default {
 pinctrl-single,pins = <
 0x15c ( PIN_INPUT | MUX_MODE2 ) /* (A16) spi0_cs0.I2C1_SCL */
 0x158 ( PIN_INPUT | MUX_MODE2 ) /* (B16) spi0_d1.I2C1_SDA */
-0x78 ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (U18) gpio1[28] /RESET */
+0x78 ( PIN_OUTPUT_PULLDOWN | MUX_MODE7 ) /* (U18) gpio1[28] /RESET */
 >;
 };
-
-
 
 
 
@@ -200,11 +232,12 @@ pinctrl-single,pins = <
       	      compatible = "wlf,wm5102";
 	      reg = <0x1a>;
 	      status = "okay";
-	      interrupts = <347>;  /* i don't know what this is */
+	      /* /IRQ is connected to GPIO2_23. Mask from HiassofT DT for cirrus audio board */
+	      interrupts = <23 8>;
 	      interrupt-controller;
 	      #interrupt-cells = <2>;
-	      interrupt-parent = <&intc>;
-	      gpio-controller; /* or this */
+	      interrupt-parent = <&gpio2>;
+	      gpio-controller;
 	      #gpio-cells = <2>;
 	      wlf,gpio-defaults = <
 		ARIZONA_GP_FN_TXLRCLK
@@ -214,14 +247,17 @@ pinctrl-single,pins = <
 		ARIZONA_GP_DEFAULT
 		>;
 	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_LOW>; /* allow /RESET wm5102 by driver */
+              wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_LOW>; /* allow LDOENA wm5102 by driver */
 	      LDOVDD-supply  = <&ldo18>; /* fixed 1V8 regulator */
 	      AVDD-supply    = <&ldo18>;
 	      DBVDD1-supply  = <&ldo18>;
 	      DBVDD2-supply  = <&ldo18>;
 	      DBVDD3-supply  = <&ldo18>;
 	      CPVDD-supply   = <&ldo18>;
+	      DCVDD-supply   = <&ldo50>;
 	      SPKVDDL-supply = <&ldo50>; /* fixed VDD_5V from BBB */
 	      SPKVDDR-supply = <&ldo50>;
+              #sound-dai-cells = <0>;
       };
 
 };
@@ -241,6 +277,7 @@ pinctrl-single,pins = <
         >;
         tx-num-evt = <32>;
         rx-num-evt = <32>;
+        #sound-dai-cells = <0>;
 };
 
 
