@@ -1395,7 +1395,7 @@ dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 
 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
 	pm_runtime_use_autosuspend(arizona->dev);
-
+dev_err(dev, "Enterin IRQ requests\n");
 	arizona_request_irq(arizona, ARIZONA_IRQ_CLKGEN_ERR, "CLKGEN error",
 			    arizona_clkgen_err, arizona);
 dev_err(dev, "ARIZONA_IRQ_CLKGEN_ERR\n");
