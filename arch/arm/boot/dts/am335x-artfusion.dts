@@ -246,8 +246,8 @@ pinctrl-single,pins = <
 	      reg = <0x1a>;
 	      status = "okay";
 	      /* /IRQ is connected to GPIO2_23. Mask from HiassofT DT for cirrus audio board */
-	      /*interrupts = <23 8>;*/
-	      interrupts = <101>;
+	      interrupts = <23 8>;
+	      /*interrupts = <101>;*/
 	      interrupt-controller;
 	      #interrupt-cells = <2>;
 	      interrupt-parent = <&gpio2>;
