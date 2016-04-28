@@ -1267,7 +1267,7 @@ int arizona_dev_init(struct arizona *arizona)
 	switch (arizona->pdata.clk32k_src) {
 	case ARIZONA_32KZ_MCLK1:
 	case ARIZONA_32KZ_MCLK2:
-dev_err(dev, "32 kHz clock: %02x\n", arizona->pdata.clk32k_src);
+dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
 				   ARIZONA_CLK_32K_SRC_MASK,
 				   arizona->pdata.clk32k_src - 1);
@@ -1318,7 +1318,6 @@ dev_err(dev, "32 kHz clock: %02x\n", arizona->pdata.clk32k_src);
 				   ARIZONA_MICB1_RATE, val);
 	}
 
-dev_err(dev, "MIC set: %d\n", ret);
 	for (i = 0; i < ARIZONA_MAX_INPUT; i++) {
 		/* Default for both is 0 so noop with defaults */
 		val = arizona->pdata.dmic_ref[i]
@@ -1359,7 +1358,6 @@ dev_err(dev, "MIC set: %d\n", ret);
 				   mask, val);
 	}
 
-dev_err(dev, "INP set: %d\n", ret);
 	for (i = 0; i < ARIZONA_MAX_OUTPUT; i++) {
 		/* Default is 0 so noop with defaults */
 		if (arizona->pdata.out_mono[i])
@@ -1371,7 +1369,6 @@ dev_err(dev, "INP set: %d\n", ret);
 				   ARIZONA_OUTPUT_PATH_CONFIG_1L + (i * 8),
 				   ARIZONA_OUT1_MONO, val);
 	}
-dev_err(dev, "OUT set: %d\n", ret);
 
 	for (i = 0; i < ARIZONA_MAX_PDM_SPK; i++) {
 		if (arizona->pdata.spk_mute[i])
@@ -1396,7 +1393,6 @@ dev_err(dev, "OUT set: %d\n", ret);
 	if (ret != 0)
 		goto err_reset;
 
-dev_err(dev, "IRQ set: %d\n", ret);
 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
 	pm_runtime_use_autosuspend(arizona->dev);
 
@@ -1409,6 +1405,7 @@ dev_err(dev, "IRQ set: %d\n", ret);
 
 	ret = mfd_add_devices(arizona->dev, PLATFORM_DEVID_NONE,
 			      subdevs, n_subdevs, NULL, 0, NULL);
+dev_err(dev, "Subdevices set: %d\n", ret);
 
 	if (ret) {
 		dev_err(arizona->dev, "Failed to add subdevices: %d\n", ret);
