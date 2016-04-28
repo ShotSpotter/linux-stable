@@ -1393,18 +1393,18 @@ dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 	if (ret != 0)
 		goto err_reset;
 
-dev_err(dev, "arizona_irq_init %d\n", ret);
 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
-dev_err(dev, "pm_runtime_set_autosuspend_delay\n");
 	pm_runtime_use_autosuspend(arizona->dev);
 
-dev_err(dev, "pm_runtime_use_autosuspend\n");
 	arizona_request_irq(arizona, ARIZONA_IRQ_CLKGEN_ERR, "CLKGEN error",
 			    arizona_clkgen_err, arizona);
+dev_err(dev, "ARIZONA_IRQ_CLKGEN_ERR\n");
 	arizona_request_irq(arizona, ARIZONA_IRQ_OVERCLOCKED, "Overclocked",
 			    arizona_overclocked, arizona);
+dev_err(dev, "ARIZONA_IRQ_OVERCLOCKED\n");
 	arizona_request_irq(arizona, ARIZONA_IRQ_UNDERCLOCKED, "Underclocked",
 			    arizona_underclocked, arizona);
+dev_err(dev, "ARIZONA_IRQ_UNDERCLOCKED\n");
 
 dev_err(dev, "arizona_request_irq\n");
 	ret = mfd_add_devices(arizona->dev, PLATFORM_DEVID_NONE,
