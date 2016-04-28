@@ -1008,7 +1008,6 @@ int arizona_dev_init(struct arizona *arizona)
 		return ret;
 	}
 
-dev_err(dev, "Early children added: %d\n", ret);
 	ret = devm_regulator_bulk_get(dev, arizona->num_core_supplies,
 				      arizona->core_supplies);
 	if (ret != 0) {
@@ -1261,6 +1260,7 @@ dev_err(dev, "Early children added: %d\n", ret);
 			     arizona->pdata.gpio_defaults[i]);
 	}
 
+dev_err(dev, "GPIO defaults: %d\n", ret);
 	/* Chip default */
 	if (!arizona->pdata.clk32k_src)
 		arizona->pdata.clk32k_src = ARIZONA_32KZ_MCLK2;
@@ -1268,12 +1268,14 @@ dev_err(dev, "Early children added: %d\n", ret);
 	switch (arizona->pdata.clk32k_src) {
 	case ARIZONA_32KZ_MCLK1:
 	case ARIZONA_32KZ_MCLK2:
+dev_err(dev, "32 kHz clock: %d\n", arizona->pdata.clk32k_src);
 		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
 				   ARIZONA_CLK_32K_SRC_MASK,
 				   arizona->pdata.clk32k_src - 1);
 		arizona_clk32k_enable(arizona);
 		break;
 	case ARIZONA_32KZ_NONE:
+dev_err(dev, "32 kHz clock NONE: %d\n", arizona->pdata.clk32k_src);
 		regmap_update_bits(arizona->regmap, ARIZONA_CLOCK_32K_1,
 				   ARIZONA_CLK_32K_SRC_MASK, 2);
 		break;
