@@ -63,7 +63,7 @@ ldo_wlf5102: ldo_wlf5102 {
 	enable-active-high;
 	regulator-always-on;
 	enable-gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
-        wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
+        /*wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
 };
 
 
@@ -260,6 +260,7 @@ pinctrl-single,pins = <
 		ARIZONA_GP_DEFAULT
 		>;
 	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_HIGH>; /* allow /RESET wm5102 by driver (via inverter)*/
+              wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
 	      LDOVDD-supply  = <&ldo18>; /* fixed 1V8 regulator */
 	      AVDD-supply    = <&ldo18>;
 	      DBVDD1-supply  = <&ldo18>;
