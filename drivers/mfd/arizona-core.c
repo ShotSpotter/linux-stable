@@ -1008,6 +1008,7 @@ int arizona_dev_init(struct arizona *arizona)
 		return ret;
 	}
 
+dev_err(dev, "Early children added: %d\n", ret);
 	ret = devm_regulator_bulk_get(dev, arizona->num_core_supplies,
 				      arizona->core_supplies);
 	if (ret != 0) {
