@@ -153,15 +153,34 @@
 	   Right now we are using a custom version of davinci-evm driver. We should switch to simple-sound-card
 	   Documentation/devicetree/bindings/sound/simple-card.txt
 	*/
+
+	clk_audio_fixed: clk_audio_fixed {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <12288000>;
+	};
+
 	sound {
-		compatible = "ti,wm8737-evm-audio";
-		ti,model = "WM8737";
-		ti,audio-codec = <&wm8737>;
-		ti,mcasp-controller = <&mcasp0>;
-		ti,codec-clock-rate = <12288000>;
-	 	ti,audio-routing =
-			"LINPUT1", "Line In",
-			"RINPUT1", "Line In";
+	      status = "okay";
+	      compatible = "simple-audio-card";
+	      simple-audio-card,name = "WM8737";
+	      simple-audio-card,widgets =
+		"Line", "Line In";
+	      simple-audio-card,routing =
+		"LINPUT1", "Line In",
+		"RINPUT1", "Line In";
+	      simple-audio-card,dai-link {
+		format = "dsp_b";
+		bitclock-master = <&sound_master>;
+		frame-master = <&sound_master>;
+		cpu {
+			sound-dai = <&mcasp0>;
+		};
+		sound_master: codec {
+			sound-dai = <&wm8737>;
+			clocks = <&clk_audio_fixed>;
+		};
+	      };
 	};
 
 
@@ -550,6 +569,7 @@
 		DBVDD-supply = <&vaux2_reg>;
 		AVDD-supply = <&vaux2_reg>;
 		MVDD-supply = <&vaux2_reg>;
+		#sound-dai-cells = <0>;
 	};
 
 };
@@ -638,6 +658,7 @@
 	>;
 	tx-num-evt = <32>;
 	rx-num-evt = <32>;
+	#sound-dai-cells = <0>;
 };
 
 &tps {
