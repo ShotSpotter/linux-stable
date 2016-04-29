@@ -1395,26 +1395,26 @@ dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 
 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
 	pm_runtime_use_autosuspend(arizona->dev);
-dev_err(dev, "Enterin IRQ requests\n");
+
 	arizona_request_irq(arizona, ARIZONA_IRQ_CLKGEN_ERR, "CLKGEN error",
 			    arizona_clkgen_err, arizona);
-dev_err(dev, "ARIZONA_IRQ_CLKGEN_ERR\n");
+
 	arizona_request_irq(arizona, ARIZONA_IRQ_OVERCLOCKED, "Overclocked",
 			    arizona_overclocked, arizona);
-dev_err(dev, "ARIZONA_IRQ_OVERCLOCKED\n");
+
 	arizona_request_irq(arizona, ARIZONA_IRQ_UNDERCLOCKED, "Underclocked",
 			    arizona_underclocked, arizona);
-dev_err(dev, "ARIZONA_IRQ_UNDERCLOCKED\n");
 
-dev_err(dev, "arizona_request_irq\n");
+
+
 	ret = mfd_add_devices(arizona->dev, PLATFORM_DEVID_NONE,
 			      subdevs, n_subdevs, NULL, 0, NULL);
 
-dev_err(dev, "mfd_add_devices\n");
 	if (ret) {
 		dev_err(arizona->dev, "Failed to add subdevices: %d\n", ret);
 		goto err_irq;
 	}
+dev_err(dev, "registration complet\n");
 
 	return 0;
 
