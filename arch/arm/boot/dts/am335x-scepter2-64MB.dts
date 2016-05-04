@@ -232,6 +232,8 @@
 		pinctrl-single,pins = <
 			0x154 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
 			0x150 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
+			0x110 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (J15) gmii1_rxer.gpio3[2] lsm303d INT1*/
+			0x118 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (J17) gmii1_rxdv.gpio3[4] lsm303d INT2 */
 		>;
 	};
 
@@ -239,6 +241,8 @@
 		pinctrl-single,pins = <
 			0x154 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (B17) spi0_d0.I2C2_SCL */
 			0x150 ( PIN_INPUT_PULLUP | MUX_MODE2 ) /* (A17) spi0_sclk.I2C2_SDA */
+			0x110 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (J15) gmii1_rxer.gpio3[2] lsm303d INT1*/
+			0x118 ( PIN_INPUT_PULLUP | MUX_MODE7 ) /* (J17) gmii1_rxdv.gpio3[4] lsm303d INT2 */
 		>;
 	};
 
@@ -583,27 +587,22 @@
 	status = "okay";
 	clock-frequency = <400000>;
 
-	accel: lsm303d@1e {
-		compatible = "st,lsm303dlh-accel";
+
+	lsm303d: lsm303d@1e {
+		compatible = "st,lsm303d";
+		source-name = "honig";
+		st,acc-drdy-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
+		st,mag-drdy-gpios = <&gpio3 4 GPIO_ACTIVE_LOW>;
+		st,acc-drdy-int-pin = <1>;
+		st,mag-drdy-int-pin = <2>;
 		st,drdy-int-pin = <1>;
 		reg = <0x1e>;
 		status = "okay";
 	};
 
-        mag: lsm303d@1e {
-                compatible = "st,lsm303dlh-magn";
-		st,drdy-int-pin = <2>;
-                reg = <0x1e>;
-                status = "okay";
-        };
 };
 
-
-&accel {
-
-};
-
-&mag {
+&lsm303d {
 
 };
 
