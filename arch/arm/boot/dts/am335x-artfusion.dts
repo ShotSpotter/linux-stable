@@ -21,19 +21,8 @@ pinctrl-names = "default";
 pinctrl-0 = <&artfusion_gpio_pins_default>;
 compatible = "gpio-leds";
 
-led@1 {
-        label = "clockcontrol";
-  gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-    default-state = "on";
-      };
-
-
-led@2 {
-  label = "clockcontroltest";
-  gpios = <&gpio1 17 GPIO_ACTIVE_HIGH>;
-    default-state = "on";
-      };
 };
+
 
 
 ldo18: ldo18 {
@@ -53,19 +42,6 @@ ldo50: ldo50 { /* BBB VCC_5V */
       enable-active-high;
       regulator-always-on;
         };
-
-
-ldo_wlf5102: ldo_wlf5102 {
-	compatible = "regulator-gpio";
-	regulator-name = "LDO_WLF5102";
-	regulator-min-microvolt = <1800000>;
-	regulator-max-microvolt = <1800000>;
-	enable-active-high;
-	regulator-always-on;
-	enable-gpio = <&gpio1 29 GPIO_ACTIVE_HIGH>;
-        /*wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
-};
-
 
 clk_audio_fixed: clk_audio_fixed {
       #clock-cells = <0>;
@@ -261,17 +237,21 @@ pinctrl-single,pins = <
 		ARIZONA_GP_DEFAULT
 		>;
 	      wlf,reset = <&gpio1 28 GPIO_ACTIVE_HIGH>; /* allow /RESET wm5102 by driver (via inverter)*/
-              wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
 	      LDOVDD-supply  = <&ldo18>; /* fixed 1V8 regulator */
 	      AVDD-supply    = <&ldo18>;
 	      DBVDD1-supply  = <&ldo18>;
 	      DBVDD2-supply  = <&ldo18>;
 	      DBVDD3-supply  = <&ldo18>;
 	      CPVDD-supply   = <&ldo18>;
-	      DCVDD-supply   = <&ldo50>;
 	      SPKVDDL-supply = <&ldo50>; /* fixed VDD_5V from BBB */
 	      SPKVDDR-supply = <&ldo50>;
               #sound-dai-cells = <0>;
+/*
+we haven't figured out what mark brown wants us to do here to reference the internal LDO 
+	ldo1: ldo1 {
+		wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
+	};
+*/
       };
 
 };
