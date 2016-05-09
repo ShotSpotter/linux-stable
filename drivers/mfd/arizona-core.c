@@ -1392,18 +1392,22 @@ dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 	ret = arizona_irq_init(arizona);
 	if (ret != 0)
 		goto err_reset;
+dev_err(dev, "arizona_irq_init complete\n");
 
 	pm_runtime_set_autosuspend_delay(arizona->dev, 100);
 	pm_runtime_use_autosuspend(arizona->dev);
 
 	arizona_request_irq(arizona, ARIZONA_IRQ_CLKGEN_ERR, "CLKGEN error",
 			    arizona_clkgen_err, arizona);
+dev_err(dev, "arizona_request_irq complete - CLKGEN error=%d\n", ARIZONA_IRQ_CLKGEN_ERR);
 
 	arizona_request_irq(arizona, ARIZONA_IRQ_OVERCLOCKED, "Overclocked",
 			    arizona_overclocked, arizona);
+dev_err(dev, "arizona_request_irq complete - Overclocked=%d\n", ARIZONA_IRQ_OVERCLOCKED);
 
 	arizona_request_irq(arizona, ARIZONA_IRQ_UNDERCLOCKED, "Underclocked",
 			    arizona_underclocked, arizona);
+dev_err(dev, "arizona_request_irq complete - Underclocked=%d\n", ARIZONA_IRQ_UNDERCLOCKED);
 
 
 
@@ -1414,7 +1418,7 @@ dev_err(dev, "32 kHz clock: 0x%01x\n", arizona->pdata.clk32k_src);
 		dev_err(arizona->dev, "Failed to add subdevices: %d\n", ret);
 		goto err_irq;
 	}
-dev_err(dev, "registration complet\n");
+dev_err(dev, "init complete\n");
 
 	return 0;
 
