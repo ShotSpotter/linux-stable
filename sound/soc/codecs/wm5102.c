@@ -1952,6 +1952,8 @@ static int wm5102_probe(struct platform_device *pdev)
 	struct wm5102_priv *wm5102;
 	int i, ret;
 
+dev_err("wm5102 DEBUG", "Entering: wm5102_probe\n");
+
 	wm5102 = devm_kzalloc(&pdev->dev, sizeof(struct wm5102_priv),
 			      GFP_KERNEL);
 	if (wm5102 == NULL)
