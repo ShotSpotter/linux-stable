@@ -587,8 +587,6 @@ static int wm5102_sysclk_ev(struct snd_soc_dapm_widget *w,
 	const struct reg_default *patch = NULL;
 	int i, patch_size;
 
-dev_err(codec->dev, "wm5102_sysclk_ev\n");
-
 	switch (arizona->rev) {
 	case 0:
 		patch = wm5102_sysclk_reva_patch;
@@ -623,8 +621,6 @@ static int wm5102_adsp_power_ev(struct snd_soc_dapm_widget *w,
 	struct arizona *arizona = dev_get_drvdata(codec->dev->parent);
 	unsigned int v;
 	int ret;
-
-dev_err(codec->dev, "wm5102_adsp_power_ev\n");
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
@@ -1956,8 +1952,6 @@ static int wm5102_probe(struct platform_device *pdev)
 	struct wm5102_priv *wm5102;
 	int i, ret;
 
-dev_err("wm5102 DEBUG", "Entering: wm5102_probe\n");
-
 	wm5102 = devm_kzalloc(&pdev->dev, sizeof(struct wm5102_priv),
 			      GFP_KERNEL);
 	if (wm5102 == NULL)
@@ -1971,8 +1965,6 @@ dev_err("wm5102 DEBUG", "Entering: wm5102_probe\n");
 
 	arizona_init_dvfs(&wm5102->core);
 
-dev_err("wm5102 DEBUG", "arizona_init_dvfs COMPLETE\n");
-
 	wm5102->core.adsp[0].part = "wm5102";
 	wm5102->core.adsp[0].num = 1;
 	wm5102->core.adsp[0].type = WMFW_ADSP2;
@@ -1985,8 +1977,6 @@ dev_err("wm5102 DEBUG", "arizona_init_dvfs COMPLETE\n");
 	ret = wm_adsp2_init(&wm5102->core.adsp[0]);
 	if (ret != 0)
 		return ret;
-
-dev_err("wm5102 DEBUG", "wm_adsp2_init COMPLETE\n");
 
 	for (i = 0; i < ARRAY_SIZE(wm5102->fll); i++)
 		wm5102->fll[i].vco_mult = 1;
@@ -2014,8 +2004,6 @@ dev_err("wm5102 DEBUG", "wm_adsp2_init COMPLETE\n");
 
 	pm_runtime_enable(&pdev->dev);
 	pm_runtime_idle(&pdev->dev);
-
-dev_err("wm5102 DEBUG", "entering: snd_soc_register_codec\n");
 
 	return snd_soc_register_codec(&pdev->dev, &soc_codec_dev_wm5102,
 				      wm5102_dai, ARRAY_SIZE(wm5102_dai));
