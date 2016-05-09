@@ -587,6 +587,8 @@ static int wm5102_sysclk_ev(struct snd_soc_dapm_widget *w,
 	const struct reg_default *patch = NULL;
 	int i, patch_size;
 
+dev_err(codec->dev, "wm5102_sysclk_ev\n");
+
 	switch (arizona->rev) {
 	case 0:
 		patch = wm5102_sysclk_reva_patch;
@@ -621,6 +623,8 @@ static int wm5102_adsp_power_ev(struct snd_soc_dapm_widget *w,
 	struct arizona *arizona = dev_get_drvdata(codec->dev->parent);
 	unsigned int v;
 	int ret;
+
+dev_err(codec->dev, "wm5102_adsp_power_ev\n");
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
