@@ -1965,6 +1965,8 @@ static int wm5102_probe(struct platform_device *pdev)
 
 	arizona_init_dvfs(&wm5102->core);
 
+dev_err("wm5102 DEBUG", "arizona_init_dvfs COMPLETE\n");
+
 	wm5102->core.adsp[0].part = "wm5102";
 	wm5102->core.adsp[0].num = 1;
 	wm5102->core.adsp[0].type = WMFW_ADSP2;
@@ -1977,6 +1979,8 @@ static int wm5102_probe(struct platform_device *pdev)
 	ret = wm_adsp2_init(&wm5102->core.adsp[0]);
 	if (ret != 0)
 		return ret;
+
+dev_err("wm5102 DEBUG", "wm_adsp2_init COMPLETE\n");
 
 	for (i = 0; i < ARRAY_SIZE(wm5102->fll); i++)
 		wm5102->fll[i].vco_mult = 1;
@@ -2004,6 +2008,8 @@ static int wm5102_probe(struct platform_device *pdev)
 
 	pm_runtime_enable(&pdev->dev);
 	pm_runtime_idle(&pdev->dev);
+
+dev_err("wm5102 DEBUG", "entering: snd_soc_register_codec\n");
 
 	return snd_soc_register_codec(&pdev->dev, &soc_codec_dev_wm5102,
 				      wm5102_dai, ARRAY_SIZE(wm5102_dai));
