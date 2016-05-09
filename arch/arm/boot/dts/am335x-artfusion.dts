@@ -250,7 +250,7 @@ pinctrl-single,pins = <
 we haven't figured out what mark brown wants us to do here to reference the internal LDO 
 	ldo1: ldo1 {
 		wlf,ldoena = <&gpio1 29 GPIO_ACTIVE_HIGH>; /* allow LDOENA wm5102 by driver */
-	};
+/*	};
 */
       };
 
