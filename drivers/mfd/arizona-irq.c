@@ -40,12 +40,16 @@ static int arizona_map_irq(struct arizona *arizona, int irq)
 int arizona_request_irq(struct arizona *arizona, int irq, char *name,
 			   irq_handler_t handler, void *data)
 {
+dev_err(arizona->dev, "arizona_request_irq: %d=%s\n", irq, name);
 	irq = arizona_map_irq(arizona, irq);
+dev_err(arizona->dev, "arizona_request_irq:arizona_map_irq %d\n", irq);
 	if (irq < 0)
 		return irq;
 
-	return request_threaded_irq(irq, NULL, handler, IRQF_ONESHOT,
+	irq= request_threaded_irq(irq, NULL, handler, IRQF_ONESHOT,
 				    name, data);
+dev_err(arizona->dev, "arizona_request_irq:request_threaded_irq %d\n", irq);
+        return irq;
 }
 EXPORT_SYMBOL_GPL(arizona_request_irq);
 
