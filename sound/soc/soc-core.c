@@ -2041,7 +2041,7 @@ EXPORT_SYMBOL_GPL(snd_soc_add_dai_controls);
 int snd_soc_dai_set_sysclk(struct snd_soc_dai *dai, int clk_id,
 	unsigned int freq, int dir)
 {
-int req;
+int ret;
 printk(KERN_ERR "snd_soc_dai_set_sysclk1: clk_id=%d, freq=%d, dir=%d\n",clk_id, freq, dir);
 	if (dai->driver && dai->driver->ops->set_sysclk) {
 printk(KERN_ERR "snd_soc_dai_set_sysclk1: dai->driver=%p, dai->driver->ops->set_sysclk=%p\n", dai->driver, dai->driver->ops->set_sysclk );
