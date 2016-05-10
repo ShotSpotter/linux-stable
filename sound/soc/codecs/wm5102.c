@@ -1871,13 +1871,15 @@ static int wm5102_codec_probe(struct snd_soc_codec *codec)
 	struct snd_soc_dapm_context *dapm = snd_soc_codec_get_dapm(codec);
 	struct wm5102_priv *priv = snd_soc_codec_get_drvdata(codec);
 	int ret;
-
+printk(KERN_ERR "wm5102_codec_probe\n");
 	ret = wm_adsp2_codec_probe(&priv->core.adsp[0], codec);
+printk(KERN_ERR "wm5102_codec_probe:wm_adsp2_codec_probe=%d\n",ret);
 	if (ret)
 		return ret;
 
 	ret = snd_soc_add_codec_controls(codec,
 					 arizona_adsp2_rate_controls, 1);
+printk(KERN_ERR "wm5102_codec_probe:snd_soc_add_codec_controls=%d\n",ret);
 	if (ret)
 		goto err_adsp2_codec_probe;
 
