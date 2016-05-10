@@ -54,7 +54,7 @@ clk_audio: clk_audio {
       #clock-cells = <0>;
       compatible = "gpio-gate-clock";
       clocks = <&clk_audio_fixed>;
-      enable-gpios = <&gpio1 27 0>; /* BeagleBone Black Clk enable on GPIO1_27 */
+      enable-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>; /* BeagleBone Black Clk enable on GPIO1_27 */
 };
 
 
