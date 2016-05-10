@@ -2041,12 +2041,19 @@ EXPORT_SYMBOL_GPL(snd_soc_add_dai_controls);
 int snd_soc_dai_set_sysclk(struct snd_soc_dai *dai, int clk_id,
 	unsigned int freq, int dir)
 {
-	if (dai->driver && dai->driver->ops->set_sysclk)
-		return dai->driver->ops->set_sysclk(dai, clk_id, freq, dir);
-	else if (dai->codec && dai->codec->driver->set_sysclk)
-		return dai->codec->driver->set_sysclk(dai->codec, clk_id, 0,
-						      freq, dir);
-	else
+int req;
+printk(KERN_ERR "snd_soc_dai_set_sysclk1: clk_id=%d, freq=%d, dir=%d\n",clk_id, freq, dir);
+	if (dai->driver && dai->driver->ops->set_sysclk) {
+printk(KERN_ERR "snd_soc_dai_set_sysclk1: dai->driver=%p, dai->driver->ops->set_sysclk=%p\n", dai->driver, dai->driver->ops->set_sysclk );
+		ret = dai->driver->ops->set_sysclk(dai, clk_id, freq, dir);
+printk(KERN_ERR "snd_soc_dai_set_sysclk1: ret=%d\n",ret);
+		return ret;
+	} else if (dai->codec && dai->codec->driver->set_sysclk) {
+printk(KERN_ERR "snd_soc_dai_set_sysclk1: dai->codec=%p, dai->driver->ops->set_sysclk=%p\n", dai->codec, dai->driver->ops->set_sysclk );
+		ret = dai->codec->driver->set_sysclk(dai->codec, clk_id, 0, freq, dir);
+printk(KERN_ERR "snd_soc_dai_set_sysclk1: ret=%d\n",ret);
+		return ret;
+	} else
 		return -ENOTSUPP;
 }
 EXPORT_SYMBOL_GPL(snd_soc_dai_set_sysclk);
