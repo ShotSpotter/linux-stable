@@ -46,8 +46,8 @@ dev_err(arizona->dev, "DBG arizona_request_irq:arizona_map_irq %d\n", irq);
 	if (irq < 0)
 		return irq;
 
-	irq= request_threaded_irq(irq, NULL, handler, IRQF_ONESHOT,
-				    name, data);
+/*	irq= request_threaded_irq(irq, NULL, handler, IRQF_ONESHOT,
+				    name, data);*/
 dev_err(arizona->dev, "DBG arizona_request_irq:request_threaded_irq %d\n", irq);
         return irq;
 }
