@@ -144,6 +144,7 @@ static int __asoc_simple_card_dai_init(struct snd_soc_dai *dai,
 
 	if (set->sysclk) {
 		ret = snd_soc_dai_set_sysclk(dai, 0, set->sysclk, 0);
+dev_err(dai->dev, "snd_soc_dai_set_sysclk: ret=%d ENOTSUPP=%d\n", ret, ENOTSUPP);
 		if (ret && ret != -ENOTSUPP) {
 			dev_err(dai->dev, "simple-card: set_sysclk error\n");
 			goto err;
