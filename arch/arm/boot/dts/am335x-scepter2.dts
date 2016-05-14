@@ -601,14 +601,13 @@
 
 	lsm303d: lsm303d@1e {
 		compatible = "st,lsm303d";
-/* most of the fields below are not used in the current driver yet */
-		sensor-names = "lsm303d-acc","lsm303d-mag";
-		st,drdy-gpios-acc = <&gpio3 2 GPIO_ACTIVE_LOW>;
-		st,drdy-gpios-mag = <&gpio3 4 GPIO_ACTIVE_LOW>;
-		st,drdy-int-pin-acc = <1>;
-		st,drdy-int-pin-mag = <2>;
 		reg = <0x1e>;
 		status = "okay";
+		/* fields below are not used in the driver yet */
+		st,sensors = "accelerometer","magnetometer";
+		st,sensor-names = "lsm303d-acc","lsm303d-mag";
+		st,drdy-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>, <&gpio3 4 GPIO_ACTIVE_LOW>;
+		st,drdy-int-pins = <1>,<2>;
 	};
 
 };
