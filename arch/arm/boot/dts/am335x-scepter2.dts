@@ -212,6 +212,17 @@
 &am33xx_pinmux {
 	pinctrl-names = "default";
 
+	sysboot_pins_default: sysboot_pins_default {
+			      pinctrl-single,pins = <
+			      0xb8 ( PIN_INPUT | MUX_MODE7 ) /* (T3) lcd_data6.gpio2[12] */
+			      0xbc ( PIN_INPUT | MUX_MODE7 ) /* (T4) lcd_data7.gpio2[13] */
+			      0xc0 ( PIN_INPUT | MUX_MODE7 ) /* (U1) lcd_data8.gpio2[14] */
+			      0xc4 ( PIN_INPUT | MUX_MODE7 ) /* (U2) lcd_data9.gpio2[15] */
+			      0xc8 ( PIN_INPUT | MUX_MODE7 ) /* (U3) lcd_data10.gpio2[16] */
+			      0xcc ( PIN_INPUT | MUX_MODE7 ) /* (U4) lcd_data11.gpio2[17] */
+			      >;
+	};
+
 	/* interrupt from pmic */
 	pmic_int1_default: pmic_int1_default {
 		pinctrl-single,pins = <
@@ -282,6 +293,7 @@
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
 			0xe8 ( PIN_INPUT | MUX_MODE7 )  /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
+		       	0x168 ( PIN_INPUT | MUX_MODE5 )  /* (E18) uart0_ctsn.timer7 pps_alt on rev3 */
 		>;
 	};
 
@@ -293,6 +305,7 @@
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
 			0xe8 ( PIN_INPUT | MUX_MODE7 ) /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
+		       	0x168 ( PIN_INPUT_PULLDOWN | MUX_MODE7 )  /* (E18) uart0_ctsn.timer7 pps_alt on rev3 */
 		>;
 	};
 
@@ -577,8 +590,6 @@
 	};
 
 };
-
-/* still not seeing i2c2 in iio */
 
 &i2c2 {
 	pinctrl-names = "default","sleep";
