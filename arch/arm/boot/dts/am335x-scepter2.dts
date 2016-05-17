@@ -1,4 +1,8 @@
-/* * Copyright (C) 2015 Gener8 --> modified from TI's AM335x_EVM board
+/*
+ * Modified from am335x-evm.dts by Texas Instruments.
+ * Changes from that file to this (c) 2015-2016 by
+ * Tom Riddle <triddle@gener8.com> Gener8 Inc
+ * Rob Calhoun <rcalhoun@gmail.com> SST Inc
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
