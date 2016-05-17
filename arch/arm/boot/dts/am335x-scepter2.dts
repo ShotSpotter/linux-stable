@@ -1,8 +1,6 @@
 /*
- * Modified from am335x-evm.dts by Texas Instruments.
- * Changes from that file to this (c) 2015-2016 by
- * Tom Riddle <triddle@gener8.com> Gener8 Inc
- * Rob Calhoun <rcalhoun@gmail.com> SST Inc
+ * Copyright (C) 2015-16 by Tom Riddle, Gener8 Inc http://gener8.net
+ * and Robert B. Calhoun, ShotSpotter Inc http://shotspotter.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -120,9 +118,10 @@
 		pinctrl-1 = <&user_cellctl_sleep>;
 		compatible = "gpio-leds";
 
-/* Tom had this commented out, so we are maintaining that.
- * This gpio is called directly in /opt/sst/modem/power-on | -off
- * Since that code works, we leave this out of the dt.
+/*
+ * Fixme: This gpio is called directly in /opt/sst/modem/power-on | -off
+ * Telit 910 uses assert timing rather than level to control power so it
+ * isn't a good fit for gpio-controlled regulator. Leave out of the dt.
  */
 #if 0
 		cellctl@1 {
@@ -151,12 +150,11 @@
 
 
 	};
-	/* Scepter 2 wm8737 config, this relates to davinci-evm.c, 12.288MHz for modified Scepter2, 12Mhz for the rest
-	   to configure for slave mode, change pin mux direction below.
 
-	   Right now we are using a custom version of davinci-evm driver. We should switch to simple-sound-card
-	   Documentation/devicetree/bindings/sound/simple-card.txt
-	*/
+/*
+ * am33x mcasp cannot generate a 12.288 MHz clock so we have an external
+ * clock. Clock drives Wolfson wm8737 which drives mcasp0 as a slave
+ */
 
 	clk_audio_fixed: clk_audio_fixed {
 		#clock-cells = <0>;
@@ -288,7 +286,7 @@
 	};
 
 
-/* kpps is not working sensibly, make both kpps inputs into gpios */
+/* kpps is not working sensibly with pps-ldisc, make both kpps inputs into gpios */
 
 	uart_gps_pins_default: uart_gps_pins_default {
 		pinctrl-single,pins = <
@@ -398,7 +396,6 @@
 		>;
 	};
 
-	/* Tom Riddle had thse as pulldown, but schematic will pull them up, so why fight it? Also we never sleep */
 	mmc1_pins_sleep: pinmux_mmc1_pins_sleep {
 		pinctrl-single,pins = <
 				    0x100 ( PIN_INPUT_PULLUP | MUX_MODE0 ) /* (G17) mmc0_clk.mmc0_clk */
