@@ -57,6 +57,20 @@
 		};
 	};
 
+
+	extradio {
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&extradio_default>;
+		pinctrl-1 = <&extradio_sleep>;
+		compatible = "gpio-leds";
+
+		extradio@1 {
+			label = "radio_pwr_intr";
+			gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+	};
+
 	gpsctls {
 
    		pinctrl-names = "default", "sleep";
@@ -313,6 +327,18 @@
 
 
 /* Scepter 2 changed pins directly here to Slave 2 settings and MII2 per pinmux tool */
+
+	extradio_default: extradio_default {
+	pinctrl-single,pins = <
+		0x24 ( PIN_OUTPUT_PULLUP | MUX_MODE7 ) /* (T10) gpmc_ad9.gpio0[23] RADIO_PWR_INTR */
+		>;
+	};
+
+	extradio_sleep: extradio_sleep {
+	pinctrl-single,pins = <
+		0x24 ( PIN_OUTPUT_PULLDOWN | MUX_MODE7 ) /* (T10) gpmc_ad9.gpio0[23] RADIO_PWR_INTR */
+		>;
+	};
 
 	cpsw_default: cpsw_default {
 		pinctrl-single,pins = <
