@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # perf-with-kcore: use perf with a copy of kcore
 # Copyright (c) 2014, Intel Corporation.
 #
@@ -109,7 +109,7 @@ fix_buildid_cache_permissions()
 		exit 1
 	fi
 
-	USER_HOME=$(bash <<< "echo ~$SUDO_USER")
+	USER_HOME=$(sh <<< "echo ~$SUDO_USER")
 
 	if [ "$HOME" != "$USER_HOME" ] ; then
 		echo "Fix unnecessary because root has a home: $HOME" >&2
