@@ -239,6 +239,14 @@
 			      >;
 	};
 
+	/* exposed on TP15 and TP16 */
+	clkout_pins: clkout_pins {
+			pinctrl-single,pins = <
+				0x1b0 ( PIN_OUTPUT | MUX_MODE3 ) /* (A15) xdma_event_intr0.clkout1 */
+				0x1b4 ( PIN_OUTPUT | MUX_MODE3 ) /* (D14) xdma_event_intr1.clkout2 */
+			>;
+	};
+
 	/* interrupt from pmic */
 	pmic_int1_default: pmic_int1_default {
 		pinctrl-single,pins = <
