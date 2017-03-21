@@ -522,6 +522,23 @@
 		>;
 	};
 
+	/* allow us to mux the ADC via gpios. Seems to work without doing this */
+	mon_ch_adr_default: mon_ch_adr_default {
+		pinctrl-single,pins = <
+		0x90 ( PIN_OUTPUT | MUX_MODE7 ) /* (R7) gpmc_advn_ale.gpio2[2] */
+		0x94 ( PIN_OUTPUT | MUX_MODE7 ) /* (T7) gpmc_oen_ren.gpio2[3] */
+		0x98 ( PIN_OUTPUT | MUX_MODE7 ) /* (U6) gpmc_wen.gpio2[4] */
+		>;
+	};
+
+
+	mon_ch_adr_sleep: mon_ch_adr_sleep {
+		pinctrl-single,pins = <
+		0x90 ( PIN_OUTPUT | MUX_MODE7 ) /* (R7) gpmc_advn_ale.gpio2[2] */
+		0x94 ( PIN_OUTPUT | MUX_MODE7 ) /* (T7) gpmc_oen_ren.gpio2[3] */
+		0x98 ( PIN_OUTPUT | MUX_MODE7 ) /* (U6) gpmc_wen.gpio2[4] */
+		>;
+	};
 
 
     my_usb_1_pins_default: my_usb_1_pins_default {
@@ -809,7 +826,9 @@
 
 &tscadc {
 	status = "okay";
-
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&mon_ch_adr_default>;
+	pinctrl-1 = <&mon_ch_adr_sleep>;
 	adc {
 		ti,adc-channels = <0 1 2 3 4 5 6 7>;
 	};
