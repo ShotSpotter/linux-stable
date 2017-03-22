@@ -317,7 +317,8 @@
 			0xd0 ( PIN_INPUT | MUX_MODE7 ) /* (V2) lcd_data12.gpio0[8] */
 			0xe8 ( PIN_INPUT | MUX_MODE7 )  /* (V5) lcd_pclk.gpio2[24] */
 			0x158 ( PIN_INPUT_PULLDOWN | MUX_MODE7 ) /* (B16) spi0_d1.gpio0[4] */
-		       	0x168 ( PIN_INPUT | MUX_MODE5 )  /* (E18) uart0_ctsn.timer7 pps_alt on rev3 */
+			/* MUX_MODE5 is timer7 but we have having issues. Disable as a gpio */
+			0x168 ( PIN_INPUT | MUX_MODE7 )  /* (E18) uart0_ctsn.timer7 pps_alt on rev3 */
 		>;
 	};
 
