@@ -726,6 +726,19 @@
 &tps {
 
 /* PMIC Inputs 5V_DIG net on schematic */
+
+	interrupt-parent = <&intc>;
+	interrupts = < 0 118 0x04 >;
+
+	#gpio-cells = <2>;
+	gpio-controller;
+
+	#interrupt-cells = <2>;
+	interrupt-controller;
+
+	ti,system-power-controller;
+	ti,en-ck32k-xtal;
+
 	vcc1-supply = <&vbat>;
 	vcc2-supply = <&vbat>;
 	vcc3-supply = <&vbat>;
