@@ -177,7 +177,8 @@ static bool mcasp_is_synchronous(struct davinci_mcasp *mcasp)
 {
 	u32 rxfmctl = mcasp_get_reg(mcasp, DAVINCI_MCASP_RXFMCTL_REG);
 	u32 aclkxctl = mcasp_get_reg(mcasp, DAVINCI_MCASP_ACLKXCTL_REG);
-
+	u32 issync = !(aclkxctl & TX_ASYNC) && rxfmctl & AFSRE;
+	printk("180 mcasp_is_synchronous: %d\n",issync);
 	return !(aclkxctl & TX_ASYNC) && rxfmctl & AFSRE;
 }
 
@@ -223,9 +224,12 @@ static void mcasp_start_rx(struct davinci_mcasp *mcasp)
 	 * sure that the TX signlas are enabled when starting reception.
 	 */
 	if (mcasp_is_synchronous(mcasp)) {
+		printk("226: issync\n");
 		mcasp_set_ctl_reg(mcasp, DAVINCI_MCASP_GBLCTLX_REG, TXHCLKRST);
 		mcasp_set_ctl_reg(mcasp, DAVINCI_MCASP_GBLCTLX_REG, TXCLKRST);
 		mcasp_set_clk_pdir(mcasp, true);
+	} else {
+		printk("231: is async\n");
 	}
 
 	/* Activate serializer(s) */
@@ -974,7 +978,18 @@ static int mcasp_i2s_hw_param(struct davinci_mcasp *mcasp, int stream,
 			mask |= (1 << i);
 	}
 
-	mcasp_clr_bits(mcasp, DAVINCI_MCASP_ACLKXCTL_REG, TX_ASYNC);
+	/*
+	 * Configure asynchronous operation enable bit TX_ASYNC
+	 * 0h = TX/RX synchronous
+	 * 1h = TX/RX asynchronous (separate clocks for TX and RX)
+	 */
+	if (mcasp_is_synchronous(mcasp)) {
+		printk("986: mcaspis sync clear async\n");
+		mcasp_clr_bits(mcasp,DAVINCI_MCASP_ACLKXCTL_REG, TX_ASYNC);
+	} else {
+		printk("986: mcaspis async set async\n");
+		mcasp_set_bits(mcasp,DAVINCI_MCASP_ACLKXCTL_REG, TX_ASYNC);
+	}
 
 	if (!mcasp->dat_port)
 		busel = TXSEL;
