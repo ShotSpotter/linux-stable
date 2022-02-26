@@ -143,13 +143,13 @@
 		      gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
-#endif
+
 		cellctl@2 {
 		      label = "cell_pwron";
 		      gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
-
+#endif
 		cellctl@3 {
 		      label = "cell_oe";
 		      gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
