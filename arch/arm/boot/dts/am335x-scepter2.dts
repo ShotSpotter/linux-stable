@@ -155,16 +155,15 @@
 		      gpios = <&gpio2 23 GPIO_ACTIVE_HIGH>;
 		      default-state = "off";
 		};
-
+#if 0
 		cellctl@4 {
 		      label = "cell_rst";
 		      gpios = <&gpio2 25 GPIO_ACTIVE_LOW>;
 		      default-state = "on";
 		};
-
+#endif
 
 	};
-
 /*
  * am33x mcasp cannot generate a 12.288 MHz clock so we have an external
  * clock. Clock drives Wolfson wm8737 which drives mcasp0 as a slave
